@@ -1,21 +1,21 @@
 DOM
 
-�½�����
-�����������ͬ��νڵ��DOM
-��ʹ�ò�ͬ�Ľڵ�����
-���ͷ���������������⼰��������
+章节内容
+·理解包含不同层次节点的DOM
+·使用不同的节点类型
+·客服浏览器兼容性问题及各种陷阱
 
-DOM(�ĵ�����ģ��)�����HTML��XML�ĵ���һ��API����������һ����λ��Ľڵ���������������Ա���ӡ��Ƴ����޸�ҳ���ĳһ���֡�
+DOM(文档对象模型)是针对HTML和XML文档的一个API。它描述了一个层次化的节点树，允许开发人员添加、移除和修改页面的某一部分。
 
-�ĵ�Ԫ�����ĵ�������Ԫ�أ�htmlҳ����html����xml�п������κ�Ԫ��
+文档元素是文档最外层的元素，html页面是html，在xml中可以是任何元素
 
-����12�����ͣ����̳���һ��������
+共有12种类型，都继承自一个基类型
 
-Node���ͣ�
+Node类型：
 
-DOM1��������һ��node�ӿڣ���Ϊnode����ʵ�֣�JS�е����нڵ㶼�̳�����
+DOM1级定义了一个node接口，做为node类型实现，JS中的所有节点都继承于它
 
-����nodeType���ԣ����ڱ����ڵ������
+都有nodeType属性，用于表明节点的类型
 
 Node.ELEMENT_NODE(1)
 Node.ATTRIBUTE_NODE(2)
@@ -30,25 +30,25 @@ Node.DOCUMENT_TYPE_NODE(10)
 Node.DOCUMENT_FRAGMENT_NODE(11)
 Node.NOTATION_NODE(12)
 
-ȷ�Ͻڵ�����
-if ��someNode.nodeType == 1�� {
+确认节点类型
+if （someNode.nodeType == 1） {
 	alert("Node is an element.")
 }
 
-��õ���Ԫ�ؽڵ���ı��ڵ㣬��1 �� 3
+最常用的是元素节点和文本节点，即1 和 3
 
-Ҫ���þ�����Ϣ��������nodeName��nodeValue
+要想获得具体信息，可以用nodeName和nodeValue
 
-ÿ���ڵ㶼��һ��childNodes���ԣ�������һ��NodeList�����������
+每个节点都有一个childNodes属性，保存着一个NodeList的类数组对象
 
-������ת��Ϊ����
+类数组转变为数组
 function convertyToArray(nodes) {
 	var array = null;
 	try {
-		array = Array.prototype.slice.call(nodes, 0) //���IE8����
+		array = Array.prototype.slice.call(nodes, 0) //针对IE8以上
 	}
 	catch (ex) {
-		//����IE6/7/8
+		//兼容IE6/7/8
 		array = new array();
 		for (var i=0, len = nodes.length; i<len; i++) {
 			array.push(nodes[i]);
@@ -59,100 +59,100 @@ function convertyToArray(nodes) {
 }
 
 
-ÿ���ڵ㶼��һ��parentNode���ԣ�ָ���丸�ڵ�
+每个节点都有一个parentNode属性，指向其父节点
 
-����ͬ���ڵ㣬previousSibling��nextSibling
+访问同胞节点，previousSibling和nextSibling
 
-�����ڵ㣺
+操作节点：
 
 appendChild():
-�����һ�����ڵ�ĵ�һ���ӽڵ�ͨ��appendChild���뵽�����ô��һ���ڵ㽫������һ���ڵ�
+如果把一个父节点的第一个子节点通过appendChild加入到最后，那么第一个节点将变成最后一个节点
 
 insertBefore():
-����2������������Ľڵ�Ͳ��սڵ㣬������Ҫ����Ľڵ���뵽���սڵ�ǰ�棬���޲��սڵ㣬����뵽���
+接受2个参数，插入的节点和参照节点，即将需要插入的节点插入到参照节点前面，若无参照节点，则插入到最后
 
 replaceChild():
-����2���������µĽڵ��Ҫ���滻�Ľڵ�
+接受2个参数，新的节点和要被替换的节点
 
 removeChild():
-ɾ���ڵ㣬����ֵ�Ǳ��Ƴ��Ľڵ㣬�Ƴ��Ľڵ���ʵ��Ȼ���ĵ��У�ֻ��û����λ��
+删除节点，返回值是被移除的节点，移除的节点其实仍然在文档中，只是没有了位置
 
 cloneChild():
-����Ϊtrue������ƣ������Ʊ����ͺ�̨����Ϊfalse����ǳ���ƣ�ֻ���Ʊ��������ƺ�Ľڵ������ĵ�������û��λ�ã���Ҫʹ��ǰ��ķ����������ӵ��ĵ���
+参数为true，则深复制，即复制本身和后台；若为false，则浅复制，只复制本身。复制后的节点属于文档，但是没有位置，需要使用前面的方法将其添加到文档中
 
-IE9��ǰ��������ᴦ���հ��ַ�����ֻ��element�ڵ�
+IE9以前浏览器不会处理空白字符，即只有element节点
 
-document���ͣ�
+document类型：
 
-JSͨ��Document���ͱ�ʾ�ĵ�����������У�document������HTMLDocument��һ��ʵ������ʾ����HTMLҳ��
-Document�ڵ���ص㣺
-nodeTypeΪ9
-nodeName��ֵΪ��document��
-nodeValue��ֵΪnull
-parentNode��ֵΪnull
-ownerDocument��ֵΪnull
+JS通过Document类型表示文档。在浏览器中，document对象是HTMLDocument的一个实例，表示整个HTML页面
+Document节点的特点：
+nodeType为9
+nodeName的值为‘document’
+nodeValue的值为null
+parentNode的值为null
+ownerDocument的值为null
 
-document.documentElementָ��htmlԪ��
+document.documentElement指向html元素
 
-document.bodyָ��bodyԪ��
+document.body指向body元素
 
-document.doctypeָ��<!DOCTYPE>��ǩ
+document.doctype指向<!DOCTYPE>标签
 
-document.title������<title>Ԫ�ص��ı�
+document.title：包含<title>元素的文本
 
-document.URL��ȡ��ҳ��������URL
+document.URL：取得页面完整的URL
 
-document.domain:ȡ������
+document.domain:取得域名
 
-document.referrer:ȡ����Դҳ���URL
+document.referrer:取得来源页面的URL
 
-ֻ��domain�������ã����Ǳ�������URL��������������ɢ��������ɢ֮���ܽ�����
-//����ҳ������p2p.wrox.com
-document.domain = "wrox.com";		// �ɹ�
-document.domain = "p2p.wrox.com"	//ʧ��
+只有domain可以设置，但是必须依据URL的域名，可以松散，但是松散之后不能紧绷：
+//假设页面来自p2p.wrox.com
+document.domain = "wrox.com";		// 成功
+document.domain = "p2p.wrox.com"	//失败
 
-���ڿ���ȫ���ƣ���ͬ�����ҳ���޷�ͨ��JSͨ�š����Խ�domain�޸ĳ�һ���ģ�Ȼ��ʵ�ֻ�����ʶԷ���JS����
+由于跨域安全限制，不同子域的页面无法通过JS通信。可以将domain修改成一样的，然后实现互相访问对方的JS对象
 
-����Ԫ�صķ���
+查找元素的方法
 getElementById
 getElementsByTagName
-namedItem():ͨ��Ԫ�ص�name���Բ���
+namedItem():通过元素的name属性查找
 getElementsByName
 
-document��������⼯��
-document.anchors�������ĵ������д�name���Ե�<a>Ԫ��
-document.applets�������ĵ������е�<applet>Ԫ�أ�������ʹ��
+document对象的特殊集合
+document.anchors：包含文档中所有带name特性的<a>元素
+document.applets：包含文档中所有的<applet>元素，不建议使用
 document.forms
 document.images
-document.links�������ĵ������д�href���Ե�<a>Ԫ��
+document.links：包含文档中所有带href特性的<a>元素
 
-��������֧�ֵ�DOM���ĸ�����ʹ��document.implementation.hasFeature()
+检测浏览器支持到DOM的哪个级别使用document.implementation.hasFeature()
 var hasXmlDom = document.implementation.hasFeature('xml', '1.0');
 
-�ĵ�д��
+文档写入
 document.write()
-document.writeln():�����ַ�����ĩβ����һ�����з���\n��
+document.writeln():会在字符串的末尾添加一个换行符（\n）
 
-Element����
+Element类型
 
-element�ڵ��ص㣺
-��nodeType��ֵΪ1
-��nodeName��ֵΪԪ�صı�ǩ��
-��nodeValue��ֵΪnull
-��parentNode������Document��Element
-���ӽڵ������Element��Text��Comment��ProcessingInstruction��CDATASection��EntityReference
+element节点特点：
+·nodeType的值为1
+·nodeName的值为元素的标签名
+·nodeValue的值为null
+·parentNode可能是Document或Element
+·子节点可能是Element、Text、Comment、ProcessingInstruction、CDATASection或EntityReference
 
-��ȡԪ�صı�ǩ����������nodeName������tagName��
+获取元素的标签名，可以用nodeName，或者tagName。
 
-��HTML�У���ǩ�������Դ�д��ʾ����XML�У���ǩ��������Դ����һ��
+在HTML中，标签名都是以大写表示；在XML中，标签名都是与源代码一致
 
-HTMLԪ��
-����HTMLԪ�ض���HTMLElement���ͱ�ʾ������ÿ��HTMLԪ�ض��������±�׼����
-id��Ԫ�����ĵ��е�Ψһ��ʶ��
-title���й�Ԫ�صĸ���˵����Ϣ
-lang��Ԫ�����ݵ����Դ���
-dir�����Եķ���ֵΪ��ltr��(left-to-right)���ߡ�rtl��(right-to-left)
-className����class
+HTML元素
+所有HTML元素都由HTMLElement类型表示，并且每个HTML元素都存在以下标准特性
+id：元素在文档中的唯一标识符
+title：有关元素的附加说明信息
+lang：元素内容的语言代码
+dir：语言的方向，值为“ltr”(left-to-right)或者“rtl”(right-to-left)
+className：即class
 
 <div id="myDiv" class="bd" title="body text" lang="en" dir="ltr"></div> 
 var div = document.getElementById('myDiv');
@@ -162,83 +162,83 @@ div.title => body text
 div.lang => en
 div.dir => ltr
 
-��ȡ����
-ÿ��Ԫ�ض���һ�������ԣ����ڸ�����ӦԪ�صĸ�����Ϣ���������Ե���Ҫ������getAttribute()��setAttribute()��removeAttribute()
+获取特性
+每个元素都有一或多个特性，用于给出相应元素的附加信息。操作特性的主要方法：getAttribute()、setAttribute()、removeAttribute()
 
-attributes����
-�����ڱ���Ԫ������
+attributes属性
+多用于遍历元素特性
 
-����Ԫ��
+创建元素
 document.createElement()
 
-Ԫ�ص��ӽڵ�
-Ԫ�ص�childNodes���԰������������ӽڵ�
+元素的子节点
+元素的childNodes属性包含它的所有子节点
 
-Text����
-�ı��ڵ���Text���ͱ�ʾ������������������͵Ĵ��ı����ݡ����԰���ת����HTML�ַ��������ܰ���HTML���롣���������ص㣺
-��nodeType��ֵΪ3
-��nodeName��ֵΪ"#text"
-��nodeValue��ֵΪ�ڵ����������ı�
-��parentNode��һ��Element
-����֧�֣�û�У��ӽڵ�
+Text类型
+文本节点由Text类型表示，包含可以照字面解释的纯文本内容。可以包含转义后的HTML字符，但不能包含HTML代码。具有以下特点：
+·nodeType的值为3
+·nodeName的值为"#text"
+·nodeValue的值为节点所包含的文本
+·parentNode是一个Element
+·不支持（没有）子节点
  
-����ͨ��nodeValue���Ի���data���Է���Text�ڵ����������ı�
+可以通过nodeValue属性或者data属性访问Text节点所包含的文本
 
-appendData(text)����text���ӵ��ڵ��ĩβ
-deteleData(offset, count)����offsetָ����λ�ÿ�ʼɾ��count�ַ�
-insertData(offset, text)����offsetָ����λ�ò���text
-replaceData(offset, count, text)����text�滻��offsetָ����λ�ÿ�ʼ��offset+countΪֹ�����ı�
-splitText��offset������offsetָ����λ�ý���ǰ�ı��ڵ�ֳ������ı�����
-substringData(offset, count)����ȡ��offsetָ����λ�ÿ�ʼ��offset+countΪֹ�����ַ���
+appendData(text)：将text添加到节点的末尾
+deteleData(offset, count)：从offset指定的位置开始删除count字符
+insertData(offset, text)：在offset指定的位置插入text
+replaceData(offset, count, text)：用text替换从offset指定的位置开始到offset+count为止处的文本
+splitText（offset）：从offset指定的位置将当前文本节点分成两个文本几点
+substringData(offset, count)：提取从offset指定的位置开始到offset+count为止处的字符串
 
-length���ԣ������Žڵ����ַ�����Ŀ��nodeValue.length = data.length
+length属性：保存着节点中字符的数目。nodeValue.length = data.length
 
-Ĭ������£�ÿ���������ݵ�Ԫ�����ֻ����һ���ı��ڵ㣬û��������ΪҲû���ı��ڵ�
+默认情况下，每个包含内容的元素最多只能有一个文本节点，没有内容则为也没有文本节点
 
-document.createTextNode()�������ı��ڵ�
+document.createTextNode()创建新文本节点
 
-noralize()����ͬһ����Ԫ���µ��ı��ڵ�ϲ���һ���ڵ㣬���ַ���ƴ�ӣ���splitText()�෴
+noralize()：将同一个父元素下的文本节点合并成一个节点，做字符串拼接，与splitText()相反
 
-Comment����
-ע����Comment��������ʾ�����������ص㣺
-��nodeType��ֵΪ8
-��nodeName��ֵΪ"#comment"
-��nodeValue��ֵ��ע�͵�����
-��parentNode������Document��Element
+Comment类型
+注释用Comment类型来表示。具有以下特点：
+·nodeType的值为8
+·nodeName的值为"#comment"
+·nodeValue的值是注释的内容
+·parentNode可能是Document或Element
 
-Comment���ͺ�text���ͼ̳�����ͬ�Ļ��࣬�����ӵ�г�splitText()֮��������ַ�����������������ͨ��nodeValue��data��������ȡע�͵�����
+Comment类型和text类型继承自相同的基类，因此它拥有除splitText()之外的所有字符串操作方法。可以通过nodeValue和data属性来获取注释的内容
 
-CDATASection����
-CDATASection����ֻ��Ի���XML���ĵ�����ʾ����CDATA���򡣾��������ص㣺
-��nodeType��ֵΪ4
-��nodeName��ֵΪ"#cdata-section"
-��nodeValue��ֵ��CDATA�����е�����
-��parentNode������Document��Element
+CDATASection类型
+CDATASection类型只针对基于XML的文档，表示的是CDATA区域。具有以下特点：
+·nodeType的值为4
+·nodeName的值为"#cdata-section"
+·nodeValue的值是CDATA区域中的内容
+·parentNode可能是Document或Element
 
-DocumentType����
-�����ã�ֻ��FireFox��Safari��Opera֧�֣��ص����£�
-��nodeType��ֵΪ10
-��nodeName��ֵΪdoctype������
-��nodeValue��ֵΪnull
-��parentNode��Document
+DocumentType类型
+不常用，只有FireFox、Safari和Opera支持，特点如下：
+·nodeType的值为10
+·nodeName的值为doctype的名称
+·nodeValue的值为null
+·parentNode是Document
 
-DocumentFragment����
-���ĵ���û�ж�Ӧ�ı�ǣ�nodeType��ֵΪ11
+DocumentFragment类型
+在文档中没有对应的标记，nodeType的值为11
 
-Attr����
-Ԫ�ص�����ͨ��Attr��������ʾ�����Ծ��Ǵ�����Ԫ���е�attributes�����еĽڵ㣬���Խڵ��ص����£�
-��nodeType��ֵΪ2
-��nodeName��ֵ�����Ե�����
-��nodeValue��ֵ�����Ե�ֵ
-��parentNode��ֵΪnull
-����HTML��û���ӽڵ�
-����XML���ӽڵ������text��EntityReference
-ͨ��ʹ��getAttrbute()��setAttrbute()����removeAttrbute()����
+Attr类型
+元素的特性通过Attr类型来表示，特性就是存在于元素中的attributes属性中的节点，特性节点特点如下：
+·nodeType的值为2
+·nodeName的值是特性的名称
+·nodeValue的值是特性的值
+·parentNode的值为null
+·在HTML中没有子节点
+·在XML中子节点可以是text或EntityReference
+通常使用getAttrbute()、setAttrbute()、和removeAttrbute()方法
 
-10.2 DOM��������
+10.2 DOM操作技术
 
-10.2.1 ��̬�ű�
-��̬�����ⲿ�ļ�
+10.2.1 动态脚本
+动态插入外部文件
 
 loadScript("client.js");
 
@@ -248,7 +248,7 @@ function loadScript(url) {
 	script.src = url;
 	document.body.appendChild(script);
 }
-��̬����JavaScript����
+动态插入JavaScript代码
 
 loadScriptString("function sayHi(){alert('Hi')};");
 
@@ -258,16 +258,16 @@ function loadScriptString(code) {
 	try {
 		script.appendChild(document.createTextNode(code));
 	} catch(ex) {
-		//IE�²���������
+		//IE下不允许访问
 		script.text = code;
 	}
 	document.body.appendChild(script);
 	
 }
 
-10.2.2 ��̬��ʽ
-��̬��ʽ��ָ��ҳ��ռ���ʱ�����ڣ���ҳ�������֮��̬���ӵ�ҳ���е���ʽ
-<link>Ԫ�����ڰ��������ⲿ���ļ�:
+10.2.2 动态样式
+动态样式是指在页面刚加载时不存在，等页面加载完之后动态添加到页面中的样式
+<link>元素用于包含来自外部的文件:
 
 loadStyle("styles.css");
 
@@ -280,7 +280,7 @@ function loadStyle(url) {
 	head.appendChild(link);
 }
 
-<style>Ԫ������ָ��Ƕ�����ʽ:
+<style>元素用于指定嵌入的样式:
 
 loadStyleString("body {background-color:red}");
 
@@ -296,61 +296,61 @@ function loadStyleString(css) {
 	head.appendChild(style);
 }
 
-10.2.3 ��������
-HTML DOMΪ<table>��<tbody>��<tr>Ԫ��������һЩ���Ժͷ���
+10.2.3 操作表格
+HTML DOM为<table>、<tbody>、<tr>元素添加了一些属性和方法
 
-Ϊ<table>Ԫ�����ӵ����Ժͷ�����
-caption�������Ŷ�<caption>Ԫ�ص�ָ��
-tBodies����һ��<tbody>Ԫ�ص�HTMLCollection
-tFoot�������Ŷ�<tfoot>Ԫ�ص�ָ��
-tHead�������Ŷ�<thead>Ԫ�ص�ָ��
-rows����һ�������������е�HTMLCollection
-createTHead()������<thead>Ԫ�أ�����ŵ������У���������
-createTFoot()������<tfoot>Ԫ�أ�����ŵ������У���������
-createCaption()������<caption>Ԫ�أ�����ŵ������У���������
-deleteTHead()��ɾ��<thead>Ԫ��
-deleteTFoot()��ɾ��<tfoot>Ԫ��
-deleteCaption()��ɾ��<caption>Ԫ��
-deleteRow(pos)��ɾ��ָ��λ�õ���
-insertRow(pos)����rows�����е�ָ��λ�ò���һ��
+为<table>元素添加的属性和方法：
+caption：保存着对<caption>元素的指针
+tBodies：是一个<tbody>元素的HTMLCollection
+tFoot：保存着对<tfoot>元素的指针
+tHead：保存着对<thead>元素的指针
+rows：是一个表格中所有行的HTMLCollection
+createTHead()：创建<thead>元素，将其放到表格中，返回引用
+createTFoot()：创建<tfoot>元素，将其放到表格中，返回引用
+createCaption()：创建<caption>元素，将其放到表格中，返回引用
+deleteTHead()：删除<thead>元素
+deleteTFoot()：删除<tfoot>元素
+deleteCaption()：删除<caption>元素
+deleteRow(pos)：删除指定位置的行
+insertRow(pos)：向rows集合中的指定位置插入一行
 
-Ϊ<tbody>Ԫ�����ӵ����Ժͷ������£�
-row��������<tbody>Ԫ�����е�HTMLCollection
-deleteRow(pos)��ɾ��ָ��λ�õ���
-insertRow(pos)����rows�����е�ָ��λ�ò���һ�У����ض��²����е�����
+为<tbody>元素添加的属性和方法如下：
+row：保存着<tbody>元素中行的HTMLCollection
+deleteRow(pos)：删除指定位置的行
+insertRow(pos)：想rows集合中的指定位置插入一行，返回对新插入行的引用
 
-Ϊ<tr>Ԫ�����ӵ����Ժͷ������£�
-cells��������<tr>Ԫ���е�Ԫ���HTMLCollection
-deleteCell(pos)��ɾ��ָ��λ�õĵ�Ԫ��
-insertCell(pos)����cells�����е�ָ��λ�ò���һ����Ԫ�񣬷��ض��²��뵥Ԫ�������
+为<tr>元素添加的属性和方法如下：
+cells：保存着<tr>元素中单元格的HTMLCollection
+deleteCell(pos)：删除指定位置的单元格
+insertCell(pos)：想cells集合中的指定位置插入一个单元格，返回对新插入单元格的引用
 
-����ʾ����
-//����table
+代码示例：
+//创建table
 var table = document.createElement("table");
 table.border = 1;
 table.width = 100%;
 
-//����tbody
+//创建tbody
 var tbody = document.createElement("tbody");
 table.appendChild(tbody);
 
-//������һ��
+//创建第一行
 tbody.insertRow(0);
 tbody.rows[0].insertCell(0);
 tbody.rows[0].cells[0].appendChild(document.createTextNode("cell 1,1"));
 tbody.rows[0].insertCell(1);
 tbody.rows[0].cells[1].appendChild(document.createTextNode("cell 2,1"));
 
-//�����ڶ���
+//创建第二行
 tbody.insertRow(1);
 tbody.rows[1].insertCell(0);
 tbody.rows[1].cells[0].appendChild(document.createTextNode("cell 1,2"));
 tbody.rows[1].insertCell(1);
 tbody.rows[1].cells[1].appendChild(document.createTextNode("cell 2,2"));
 
-10.2.4 ʹ��NodeList
-NodeList��NamedNodeMap��HTMLCollection�������϶��Ƕ�̬�ģ�ÿ���ṹ�����仯ʱ�����Ƕ������
-���´���ᵼ������ѭ����
+10.2.4 使用NodeList
+NodeList、NamedNodeMap、HTMLCollection三个集合都是动态的，每当结构发生变化时，他们都会更新
+以下代码会导致无限循环：
 var divs = document.getElementsByTagName("div"),
     i,
     div;
@@ -361,5 +361,5 @@ for (i=0; i<divs.length; i++) {
 
 }
 
-ÿһ��ѭ���������»�ȡdivs��divs��iͬʱ���������Ի��γ�����ѭ��
-��������һ��NodeList����length���Գ�ʼ��Ϊһ���������ɣ�������len = divs.length;
+每一次循环都会重新获取divs，divs和i同时递增，所以会形成无限循环
+如果想迭代一个NodeList，将length属性初始化为一个变量即可，即定义len = divs.length;

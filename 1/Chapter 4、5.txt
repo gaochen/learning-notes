@@ -1,30 +1,30 @@
-µÚ4ÕÂ
+ç¬¬4ç« 
 
-º¯Êý´«µÝ²ÎÊý£¬ÊÇ°´Öµ´«µÝ 
+å‡½æ•°ä¼ é€’å‚æ•°ï¼Œæ˜¯æŒ‰å€¼ä¼ é€’ 
 var obj = {x : 1};
 function foo(o) {
     o = 100;
 }
 foo(obj);
-console.log(obj.x); // ÈÔÈ»ÊÇ1, obj²¢Î´±»ÐÞ¸ÄÎª100.
+console.log(obj.x); // ä»ç„¶æ˜¯1, objå¹¶æœªè¢«ä¿®æ”¹ä¸º100.
 
 http://www.jb51.net/article/60568.htm
 
-¼ì²âÀàÐÍ
+æ£€æµ‹ç±»åž‹
 typeof 
-ÌØÀý typeof null ->  object
+ç‰¹ä¾‹ typeof null ->  object
 
-¾ßÌå²é¿´ÊÇÊ²Ã´ÀàÐÍµÄ¶ÔÏó£¬instanceof
+å…·ä½“æŸ¥çœ‹æ˜¯ä»€ä¹ˆç±»åž‹çš„å¯¹è±¡ï¼Œinstanceof
 
-Ö´ÐÐ»·¾³¶¨ÒåÁË±äÁ¿»òº¯ÊýÓÐÈ¨·ÃÎÊµÄÆäËûÊý¾Ý£¬¾ö¶¨ÁËËüÃÇ¸÷×ÔµÄÐÐÎª£¬Ã¿¸öÖ´ÐÐ»·¾³ÓÐÒ»¸öÓëÖ®¹ØÁªµÄ±äÁ¿¶ÔÏó£¬»·¾³ÖÐ¶¨ÒåµÄËùÓÐ±äÁ¿ºÍº¯Êý¶¼±£´æÔÚÕâ¸ö¶ÔÏóÖÐ¡£
+æ‰§è¡ŒçŽ¯å¢ƒå®šä¹‰äº†å˜é‡æˆ–å‡½æ•°æœ‰æƒè®¿é—®çš„å…¶ä»–æ•°æ®ï¼Œå†³å®šäº†å®ƒä»¬å„è‡ªçš„è¡Œä¸ºï¼Œæ¯ä¸ªæ‰§è¡ŒçŽ¯å¢ƒæœ‰ä¸€ä¸ªä¸Žä¹‹å…³è”çš„å˜é‡å¯¹è±¡ï¼ŒçŽ¯å¢ƒä¸­å®šä¹‰çš„æ‰€æœ‰å˜é‡å’Œå‡½æ•°éƒ½ä¿å­˜åœ¨è¿™ä¸ªå¯¹è±¡ä¸­ã€‚
 
-ÑÓ³¤×÷ÓÃÓòÁ´£º withÓï¾ä  catch¿é
+å»¶é•¿ä½œç”¨åŸŸé“¾ï¼š withè¯­å¥  catchå—
 
-À¬»øÊÕ¼¯»úÖÆ£ºÕÒ³öÄÇÐ©²»ÔÙ¼ÌÐøÊ¹ÓÃµÄ±äÁ¿£¬È»ºóÊÍ·ÅÆäÕ¼ÓÃµÄÄÚ´æ¡£À¬»øÊÕ¼¯Æ÷»á°´ÕÕ¹Ì¶¨µÄÊ±¼ä¼ä¸ô£¬ÖÜÆÚÐÔµÄÖ´ÐÐÕâÒ»²Ù×÷¡£
-À¬»øÊÕ¼¯Æ÷»á±êÊ¶ÎÞÓÃ±äÁ¿
-±êÊ¶·½·¨£º1. ±ê¼ÇÇå³ý£¬js×î³£ÓÃµÄÀ¬»øÊÕ¼¯·½Ê½£¬Ê×ÏÈ¸øÄÚ´æÖÐµÄËùÓÐ±äÁ¿¼ÓÉÏ±ê¼Ç£¬È»ºóÈ¥µô»·¾³ÖÐµÄ±äÁ¿ºÍ±»»·¾³ÖÐµÄ±äÁ¿ÒýÓÃµÄ±äÁ¿µÄ±ê¼Ç£¬¶øÖ®ºóÔÙ±»¼ÓÉÏ±ê¼ÇµÄ±äÁ¿¾ÍÊÇÐèÒªÉ¾³ýµÄ±äÁ¿
-	  2. ÒýÓÃ¼ÆÊý
-¹ÜÀíÄÚ´æÌá¸ßÐÔÄÜ£º¶ÔÓÚÈ«¾Ö±äÁ¿ºÍÈ«¾Ö¶ÔÏó²ÉÓÃ½â³ýÒýÓÃ
+åžƒåœ¾æ”¶é›†æœºåˆ¶ï¼šæ‰¾å‡ºé‚£äº›ä¸å†ç»§ç»­ä½¿ç”¨çš„å˜é‡ï¼Œç„¶åŽé‡Šæ”¾å…¶å ç”¨çš„å†…å­˜ã€‚åžƒåœ¾æ”¶é›†å™¨ä¼šæŒ‰ç…§å›ºå®šçš„æ—¶é—´é—´éš”ï¼Œå‘¨æœŸæ€§çš„æ‰§è¡Œè¿™ä¸€æ“ä½œã€‚
+åžƒåœ¾æ”¶é›†å™¨ä¼šæ ‡è¯†æ— ç”¨å˜é‡
+æ ‡è¯†æ–¹æ³•ï¼š1. æ ‡è®°æ¸…é™¤ï¼Œjsæœ€å¸¸ç”¨çš„åžƒåœ¾æ”¶é›†æ–¹å¼ï¼Œé¦–å…ˆç»™å†…å­˜ä¸­çš„æ‰€æœ‰å˜é‡åŠ ä¸Šæ ‡è®°ï¼Œç„¶åŽåŽ»æŽ‰çŽ¯å¢ƒä¸­çš„å˜é‡å’Œè¢«çŽ¯å¢ƒä¸­çš„å˜é‡å¼•ç”¨çš„å˜é‡çš„æ ‡è®°ï¼Œè€Œä¹‹åŽå†è¢«åŠ ä¸Šæ ‡è®°çš„å˜é‡å°±æ˜¯éœ€è¦åˆ é™¤çš„å˜é‡
+	  2. å¼•ç”¨è®¡æ•°
+ç®¡ç†å†…å­˜æé«˜æ€§èƒ½ï¼šå¯¹äºŽå…¨å±€å˜é‡å’Œå…¨å±€å¯¹è±¡é‡‡ç”¨è§£é™¤å¼•ç”¨
 function createPerson(name) {
 	var localPerson = new Object();
 	localPerson.name = name;
@@ -32,31 +32,31 @@ function createPerson(name) {
 }
 
 var globalPerson = createPerson('Nick');
-//ÊÖ¹¤½â³ýglobalPersonµÄÒýÓÃ
+//æ‰‹å·¥è§£é™¤globalPersonçš„å¼•ç”¨
 globalPerson = null;
 
-µÚ5ÕÂ ÒýÓÃÀàÐÍ
+ç¬¬5ç«  å¼•ç”¨ç±»åž‹
 
 Array
-Êý×éµü´ú·½·¨
-every():¶ÔÊý×éÖÐµÄÃ¿Ò»ÏîÔËÐÐ¸ø¶¨º¯Êý£¬Èç¹û¸Ãº¯Êý¶ÔÃ¿Ò»Ïî¶¼·µ»Øtrue£¬Ôò·µ»Øtrue
-filter():¶ÔÊý×éÖÐµÄÃ¿Ò»ÏîÔËÐÐ¸ø¶¨º¯Êý£¬·µ»Ø¸Ãº¯Êý»á·µ»ØtrueµÄÏî×é³ÉµÄÊý×é
-forEach():¶ÔÊý×éÖÐµÄÃ¿Ò»ÏîÔËÐÐ¸ø¶¨µÄº¯Êý£¬Õâ¸ö·½·¨Ã»ÓÐ·µ»ØÖµ
-map():¶ÔÊý×éÖÐµÄÃ¿Ò»ÏîÔËÐÐ¸ø¶¨µÄº¯Êý£¬·µ»ØÃ¿´Îº¯Êýµ÷ÓÃµÄ½á¹û×é³ÉµÄÊý×é
-some():¶ÔÊý×éÖÐµÄÃ¿Ò»ÏîÔËÐÐ¸ø¶¨º¯Êý£¬Èç¹û¸Ãº¯Êý¶ÔÈÎÒ»Ïî·µ»Øtrue£¬Ôò·µ»Øtrue
+æ•°ç»„è¿­ä»£æ–¹æ³•
+every():å¯¹æ•°ç»„ä¸­çš„æ¯ä¸€é¡¹è¿è¡Œç»™å®šå‡½æ•°ï¼Œå¦‚æžœè¯¥å‡½æ•°å¯¹æ¯ä¸€é¡¹éƒ½è¿”å›žtrueï¼Œåˆ™è¿”å›žtrue
+filter():å¯¹æ•°ç»„ä¸­çš„æ¯ä¸€é¡¹è¿è¡Œç»™å®šå‡½æ•°ï¼Œè¿”å›žè¯¥å‡½æ•°ä¼šè¿”å›žtrueçš„é¡¹ç»„æˆçš„æ•°ç»„
+forEach():å¯¹æ•°ç»„ä¸­çš„æ¯ä¸€é¡¹è¿è¡Œç»™å®šçš„å‡½æ•°ï¼Œè¿™ä¸ªæ–¹æ³•æ²¡æœ‰è¿”å›žå€¼
+map():å¯¹æ•°ç»„ä¸­çš„æ¯ä¸€é¡¹è¿è¡Œç»™å®šçš„å‡½æ•°ï¼Œè¿”å›žæ¯æ¬¡å‡½æ•°è°ƒç”¨çš„ç»“æžœç»„æˆçš„æ•°ç»„
+some():å¯¹æ•°ç»„ä¸­çš„æ¯ä¸€é¡¹è¿è¡Œç»™å®šå‡½æ•°ï¼Œå¦‚æžœè¯¥å‡½æ•°å¯¹ä»»ä¸€é¡¹è¿”å›žtrueï¼Œåˆ™è¿”å›žtrue
 
 Date
-Date.parse() ¸ñÊ½ new Date("May 25, 2005")
-Date.UTC()  ¸ñÊ½ new Date(2005, 4, 5, 17, 55, 55, 555)
+Date.parse() æ ¼å¼ new Date("May 25, 2005")
+Date.UTC()  æ ¼å¼ new Date(2005, 4, 5, 17, 55, 55, 555)
 
 Function
-×÷ÎªÖµµÄº¯Êý
-ÆÕÍ¨Ä£Ê½
+ä½œä¸ºå€¼çš„å‡½æ•°
+æ™®é€šæ¨¡å¼
 function callSomeFunction(someFunction, someArgument) {
 	return someFunction(someArgument);
 }
-Ê¹ÓÃÀý×Ó
-¼ÙÉèÓÐÒ»¸ö¶ÔÏóÊý×é£¬ÐèÒª¸ù¾ÝÊý×éÖÐ¶ÔÏóµÄÄ³¸öÊôÐÔ¶ÔÊý×é½øÐÐÅÅÐò
+ä½¿ç”¨ä¾‹å­
+å‡è®¾æœ‰ä¸€ä¸ªå¯¹è±¡æ•°ç»„ï¼Œéœ€è¦æ ¹æ®æ•°ç»„ä¸­å¯¹è±¡çš„æŸä¸ªå±žæ€§å¯¹æ•°ç»„è¿›è¡ŒæŽ’åº
 function createComparisonFunction(propertyName) {
 
 	return function(object1, object2) {
@@ -77,32 +77,32 @@ function createComparisonFunction(propertyName) {
 	}
 }
 
-º¯ÊýÄÚ²¿ÌØÊâ¶ÔÏó£ºarguments , this
+å‡½æ•°å†…éƒ¨ç‰¹æ®Šå¯¹è±¡ï¼šarguments , this
 
-º¯ÊýÄÚ²¿ÊôÐÔ£º
-length:·µ»Ø¸Ãº¯Êý½ÓÊÜµÄ²ÎÊý¸ñÊ½
+å‡½æ•°å†…éƒ¨å±žæ€§ï¼š
+length:è¿”å›žè¯¥å‡½æ•°æŽ¥å—çš„å‚æ•°æ ¼å¼
 prototype
-·Ç¼Ì³ÐµÄÁ½¸ö·½·¨£º call()  apply£¨£©
+éžç»§æ‰¿çš„ä¸¤ä¸ªæ–¹æ³•ï¼š call()  applyï¼ˆï¼‰
 
-»ù±¾°ü×°ÀàÐÍ
-ÎªÁË·½±ã²Ù×÷»ù±¾ÀàÐÍÖµ£¬Ìá¹©ÁË3¸öÌØÊâµÄÒýÓÃÀàÐÍ:Boolean, Number, String
-±¾À´»ù±¾ÀàÐÍ²»Ó¦¸ÃÓÐ·½·¨£¬µ«ÊÇÎªÁËÄÜÊµÏÖ²Ù×÷£¬ºóÌ¨½øÐÐÁËÒ»ÏµÁÐµÄ´¦Àí
+åŸºæœ¬åŒ…è£…ç±»åž‹
+ä¸ºäº†æ–¹ä¾¿æ“ä½œåŸºæœ¬ç±»åž‹å€¼ï¼Œæä¾›äº†3ä¸ªç‰¹æ®Šçš„å¼•ç”¨ç±»åž‹:Boolean, Number, String
+æœ¬æ¥åŸºæœ¬ç±»åž‹ä¸åº”è¯¥æœ‰æ–¹æ³•ï¼Œä½†æ˜¯ä¸ºäº†èƒ½å®žçŽ°æ“ä½œï¼ŒåŽå°è¿›è¡Œäº†ä¸€ç³»åˆ—çš„å¤„ç†
 
 var s1 = "some text";
 var s2 = s1.substring(2);
 
-Õâ¶Î´úÂëºóÌ¨µÄ²Ù×÷£º
-1. ´´½¨StringÀàÐÍµÄÒ»¸öÊµÀý£ºvar s1 = new String("some text");
-2. ÔÚÊµÀýÉÏµ÷ÓÃÖ¸¶¨µÄ·½·¨:   var s2 = s1.subString(2);
-3. Ïú»ÙÕâ¸öÊµÀý:	     s1 = null;
+è¿™æ®µä»£ç åŽå°çš„æ“ä½œï¼š
+1. åˆ›å»ºStringç±»åž‹çš„ä¸€ä¸ªå®žä¾‹ï¼švar s1 = new String("some text");
+2. åœ¨å®žä¾‹ä¸Šè°ƒç”¨æŒ‡å®šçš„æ–¹æ³•:   var s2 = s1.subString(2);
+3. é”€æ¯è¿™ä¸ªå®žä¾‹:	     s1 = null;
 
-ÒýÓÃÀàÐÍÓë»ù±¾°ü×°ÀàÐÍµÄÖ÷ÒªÇø±ðÊÇ¶ÔÏóµÄÉú´æÆÚ£¬ÒýÓÃÀàÐÍÊÇÔÚÖ´ÐÐÁËÁ÷Àë¿ªµ±Ç°×÷ÓÃÓòÖ®Ç°¶¼Ò»Ö±±£´æÔÚÄÚ´æÖÐ¡£¶ø×Ô¶¯´´½¨µÄ»ù±¾°ü×°ÀàÐÍµÄ¶ÔÏó£¬ÔòÖ»´æÔÚÓÚÒ»ÐÐ´úÂëµÄÖ´ÐÐË²¼ä£¬È»ºóÁ¢¼´±»Ïú»Ù
+å¼•ç”¨ç±»åž‹ä¸ŽåŸºæœ¬åŒ…è£…ç±»åž‹çš„ä¸»è¦åŒºåˆ«æ˜¯å¯¹è±¡çš„ç”Ÿå­˜æœŸï¼Œå¼•ç”¨ç±»åž‹æ˜¯åœ¨æ‰§è¡Œäº†æµç¦»å¼€å½“å‰ä½œç”¨åŸŸä¹‹å‰éƒ½ä¸€ç›´ä¿å­˜åœ¨å†…å­˜ä¸­ã€‚è€Œè‡ªåŠ¨åˆ›å»ºçš„åŸºæœ¬åŒ…è£…ç±»åž‹çš„å¯¹è±¡ï¼Œåˆ™åªå­˜åœ¨äºŽä¸€è¡Œä»£ç çš„æ‰§è¡Œçž¬é—´ï¼Œç„¶åŽç«‹å³è¢«é”€æ¯
 
-BooleanÀàÐÍ
-BooleanÀàÐÍÊÇ²¼¶ûÖµ¶ÔÓ¦µÄÒýÓÃÀàÐÍ
+Booleanç±»åž‹
+Booleanç±»åž‹æ˜¯å¸ƒå°”å€¼å¯¹åº”çš„å¼•ç”¨ç±»åž‹
 var booleanObject = new Boolean(true);
-BooleanÀàÐÍµÄÊµÀýÖØÐ´ÁËvalueOf()ºÍtoString£¨)·½·¨£¬·µ»Ø"true"ºÍ"false"
-BooleanÀàÐÍºÍBoolean»ù±¾ÀàÐÍµÄÇø±ð£º
+Booleanç±»åž‹çš„å®žä¾‹é‡å†™äº†valueOf()å’ŒtoStringï¼ˆ)æ–¹æ³•ï¼Œè¿”å›ž"true"å’Œ"false"
+Booleanç±»åž‹å’ŒBooleanåŸºæœ¬ç±»åž‹çš„åŒºåˆ«ï¼š
 var falseObject = new Boolean(false);
 var result = falseObject && true;
 alert(result);	// true
@@ -111,37 +111,37 @@ var falseValue = false;
 result = falseValue && true;
 alert(result);	// false
 
-ÓÉÉÏ£¬²¼¶û±í´ïÊ½ÖÐ½«ËùÓÐ¶ÔÏó¶¼±äÎªtrue
+ç”±ä¸Šï¼Œå¸ƒå°”è¡¨è¾¾å¼ä¸­å°†æ‰€æœ‰å¯¹è±¡éƒ½å˜ä¸ºtrue
 
-NumberÀàÐÍ
+Numberç±»åž‹
 var num = 10;
 alert(num.toFixed(2));	// "10.00"
 
 var num = 10.005;
 alert(num.toFixed(2));	// "10.01"
 
-StringÀàÐÍ
+Stringç±»åž‹
 var stringValue = "hello world";
 
 charAt():  stringValue.charAt(1)	// "e"
 charCodeAt(): stringValue.charCodeAt(1)		// "101"
 
-slice()£ºµÚÒ»¸ö²ÎÊýÊÇÆðÊ¼Î»ÖÃ£¬µÚ¶þ¸ö²ÎÊýÎª½áÊøÎ»ÖÃ£¬ÈôµÚÒ»¸ö²ÎÊýÎª¸º£¬Ôò»»ËãÎª×Ü³¤¶È¼ÓÕâ¸ö¸ºÊý£¬ÈôµÚ¶þ¸ö²ÎÊýÎª¸ºÊý£¬Ôò»»ËãÎª×Ü³¤¶È¼ÓÕâ¸ö¸ºÊý¡£·µ»ØÖµÎªÐÂµÄ×Ö·û´®
-substring£¨£©£ºµÚÒ»¸ö²ÎÊýÊÇÆðÊ¼Î»ÖÃ£¬µÚ¶þ¸ö²ÎÊýÎª½áÊøÎ»ÖÃ£¬ÈôµÚÒ»¸ö²ÎÊýÎª¸º£¬Ôò»»ËãÎª×Ü³¤¶È¼ÓÕâ¸ö¸ºÊý£¬ÈôµÚ¶þ¸ö²ÎÊýÎª¸ºÊý£¬Ôò°ÑµÚ¶þ¸ö²ÎÊýµ±×÷0£¬´ËÊ±»á½«µÚÒ»¸ö²ÎÊýÓëµÚ¶þ¸ö²ÎÊý»»Î»£¬±ÈÈçsubstring(3, -4) -> substring(3, 0) -> substring(0, 3)¡£·µ»ØÖµÎªÐÂµÄ×Ö·û´®
-substr():µÚÒ»¸ö²ÎÊýÊÇÆðÊ¼Î»ÖÃ£¬µÚ¶þ¸ö²ÎÊýÊÇ½ØÈ¡³¤¶È£¬ÈôµÚ¶þ¸ö²ÎÊýÎª¸ºÊý£¬Ôò°ÑµÚ¶þ¸ö²ÎÊýµ±×÷0£¬Ôò×îºó·µ»ØÒ»¸ö¿Õ×Ö·û´®
+slice()ï¼šç¬¬ä¸€ä¸ªå‚æ•°æ˜¯èµ·å§‹ä½ç½®ï¼Œç¬¬äºŒä¸ªå‚æ•°ä¸ºç»“æŸä½ç½®ï¼Œè‹¥ç¬¬ä¸€ä¸ªå‚æ•°ä¸ºè´Ÿï¼Œåˆ™æ¢ç®—ä¸ºæ€»é•¿åº¦åŠ è¿™ä¸ªè´Ÿæ•°ï¼Œè‹¥ç¬¬äºŒä¸ªå‚æ•°ä¸ºè´Ÿæ•°ï¼Œåˆ™æ¢ç®—ä¸ºæ€»é•¿åº¦åŠ è¿™ä¸ªè´Ÿæ•°ã€‚è¿”å›žå€¼ä¸ºæ–°çš„å­—ç¬¦ä¸²
+substringï¼ˆï¼‰ï¼šç¬¬ä¸€ä¸ªå‚æ•°æ˜¯èµ·å§‹ä½ç½®ï¼Œç¬¬äºŒä¸ªå‚æ•°ä¸ºç»“æŸä½ç½®ï¼Œè‹¥ç¬¬ä¸€ä¸ªå‚æ•°ä¸ºè´Ÿï¼Œåˆ™æ¢ç®—ä¸ºæ€»é•¿åº¦åŠ è¿™ä¸ªè´Ÿæ•°ï¼Œè‹¥ç¬¬äºŒä¸ªå‚æ•°ä¸ºè´Ÿæ•°ï¼Œåˆ™æŠŠç¬¬äºŒä¸ªå‚æ•°å½“ä½œ0ï¼Œæ­¤æ—¶ä¼šå°†ç¬¬ä¸€ä¸ªå‚æ•°ä¸Žç¬¬äºŒä¸ªå‚æ•°æ¢ä½ï¼Œæ¯”å¦‚substring(3, -4) -> substring(3, 0) -> substring(0, 3)ã€‚è¿”å›žå€¼ä¸ºæ–°çš„å­—ç¬¦ä¸²
+substr():ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯èµ·å§‹ä½ç½®ï¼Œç¬¬äºŒä¸ªå‚æ•°æ˜¯æˆªå–é•¿åº¦ï¼Œè‹¥ç¬¬äºŒä¸ªå‚æ•°ä¸ºè´Ÿæ•°ï¼Œåˆ™æŠŠç¬¬äºŒä¸ªå‚æ•°å½“ä½œ0ï¼Œåˆ™æœ€åŽè¿”å›žä¸€ä¸ªç©ºå­—ç¬¦ä¸²
 
-indexOf():´ÓÒ»¸ö×Ö·û´®ÖÐËÑË÷¸ø¶¨µÄ×Ó×Ö·û´®£¬·µ»Ø×Ó×Ö·û´®µÄÎ»ÖÃ
-lastIndexOf():Í¬ÉÏ£¬Ö»ÊÇ´Ó×Ö·û´®µÄÄ©Î²ÏòÇ°ËÑË÷
+indexOf():ä»Žä¸€ä¸ªå­—ç¬¦ä¸²ä¸­æœç´¢ç»™å®šçš„å­å­—ç¬¦ä¸²ï¼Œè¿”å›žå­å­—ç¬¦ä¸²çš„ä½ç½®
+lastIndexOf():åŒä¸Šï¼Œåªæ˜¯ä»Žå­—ç¬¦ä¸²çš„æœ«å°¾å‘å‰æœç´¢
 
-trim(): ES5¶¨Òå£¬´´½¨Ò»¸ö×Ö·û´®µÄ¸±±¾£¬É¾³ýÇ°ÖÃ¼°ºó×ºµÄËùÓÐ¿Õ¸ñ£¬·µ»ØµÄÊÇÒ»¸öÐÂµÄ×Ö·û´®
+trim(): ES5å®šä¹‰ï¼Œåˆ›å»ºä¸€ä¸ªå­—ç¬¦ä¸²çš„å‰¯æœ¬ï¼Œåˆ é™¤å‰ç½®åŠåŽç¼€çš„æ‰€æœ‰ç©ºæ ¼ï¼Œè¿”å›žçš„æ˜¯ä¸€ä¸ªæ–°çš„å­—ç¬¦ä¸²
 
-toLowerCase():½«×Ö·û´®×ª»»ÎªÐ¡Ð´
-toUpperCase():×ª»»Îª´óÐ´
+toLowerCase():å°†å­—ç¬¦ä¸²è½¬æ¢ä¸ºå°å†™
+toUpperCase():è½¬æ¢ä¸ºå¤§å†™
 
-×Ö·û´®Æ¥Åä·½·¨
-match()£º·µ»ØÒ»¸öÊý×é
-search():ÈôÔçµ½£¬Ôò·µ»ØË÷ÒýÖµ£¬Î´ÕÒµ½Ôò·µ»Ø-1
-replace():½ÓÊÜÁ½¸ö²ÎÊý£¬µÚ¶þ¸ö²ÎÊý¿ÉÒÔÊÇº¯Êý£¬ÖØµãÑÐ¾¿
+å­—ç¬¦ä¸²åŒ¹é…æ–¹æ³•
+match()ï¼šè¿”å›žä¸€ä¸ªæ•°ç»„
+search():è‹¥æ—©åˆ°ï¼Œåˆ™è¿”å›žç´¢å¼•å€¼ï¼Œæœªæ‰¾åˆ°åˆ™è¿”å›ž-1
+replace():æŽ¥å—ä¸¤ä¸ªå‚æ•°ï¼Œç¬¬äºŒä¸ªå‚æ•°å¯ä»¥æ˜¯å‡½æ•°ï¼Œé‡ç‚¹ç ”ç©¶
 
 function htmlEscape(text) {
 	return text.replace(/[<>"&]/g, function(match, pos, originalText) {
@@ -159,41 +159,41 @@ function htmlEscape(text) {
 	});
 }
 alert(htmlEscape("<p class=\"greeting\">Hello world!</p>"));
-Êä³ö &ltp class=&quot;greeting&quot;&gtHello world!&lt/p&gt
+è¾“å‡º &ltp class=&quot;greeting&quot;&gtHello world!&lt/p&gt
 
-split():»ùÓÚÖ¸¶¨µÄ·Ö¸ô·û½«Ò»¸ö×Ö·û´®·Ö¸ôÎª°üº¬¶à¸ö×Ö·û´®µÄÊý×é¡£µÚ¶þ¸ö²ÎÊý¿ÉÒÔ·µ»ØÊý×éµÄ³¤¶È
+split():åŸºäºŽæŒ‡å®šçš„åˆ†éš”ç¬¦å°†ä¸€ä¸ªå­—ç¬¦ä¸²åˆ†éš”ä¸ºåŒ…å«å¤šä¸ªå­—ç¬¦ä¸²çš„æ•°ç»„ã€‚ç¬¬äºŒä¸ªå‚æ•°å¯ä»¥è¿”å›žæ•°ç»„çš„é•¿åº¦
 
 var colorText = "red, blue, green, yellow";
 var color1 = colorText.split(",", 2)	// ["red", "blue"]
 
-localeCompare():ÓÃÓÚ±È½ÏÁ½¸ö×Ö·û´®
+localeCompare():ç”¨äºŽæ¯”è¾ƒä¸¤ä¸ªå­—ç¬¦ä¸²
 var stringValue = "yellow";
 alert(stringValue.localeCompare("brick"));	// 1
 alert(stringValue.localeCompare("yellow"));	// 0
 alert(stringValue.localeCompare("zoo"));	// -1
 
-fromCharCode():½ÓÊÜÒ»¸ö»ò¶à¸ö×Ö·û±àÂë£¬È»ºó½«ËüÃÇ×ª»»ÎªÒ»¸ö×Ö·û´®
+fromCharCode():æŽ¥å—ä¸€ä¸ªæˆ–å¤šä¸ªå­—ç¬¦ç¼–ç ï¼Œç„¶åŽå°†å®ƒä»¬è½¬æ¢ä¸ºä¸€ä¸ªå­—ç¬¦ä¸²
 alert(String.fromCharCode(104, 101, 108, 108, 111));	// "hello"
 
-µ¥ÌåÄÚÖÃ¶ÔÏó
-¶¨Òå£ºÓÉECMAScriptÊµÏÖÌá¹©µÄ¡¢²»ÒÀÀµÓÚËÞÖ÷»·¾³µÄ¶ÔÏó£¬ÕâÐ©¶ÔÏóÔÚECMAScript³ÌÐòÖ´ÐÐÖ®Ç°¾ÍÒÑ¾­´æÔÚÁË£¬±ÈÈçObject,String,Array,Global,Math
+å•ä½“å†…ç½®å¯¹è±¡
+å®šä¹‰ï¼šç”±ECMAScriptå®žçŽ°æä¾›çš„ã€ä¸ä¾èµ–äºŽå®¿ä¸»çŽ¯å¢ƒçš„å¯¹è±¡ï¼Œè¿™äº›å¯¹è±¡åœ¨ECMAScriptç¨‹åºæ‰§è¡Œä¹‹å‰å°±å·²ç»å­˜åœ¨äº†ï¼Œæ¯”å¦‚Object,String,Array,Global,Math
 
-eval():½«´«ÈëµÄ²ÎÊýµ±×÷Êµ¼ÊµÄECMAScriptÓï¾äÀ´½âÎö£¬È»ºó°ÑÖ´ÐÐ½á¹û²åÈëµ½Ô­Î»ÖÃ¡£
-Í¨¹ýeval()Ö´ÐÐµÄ´úÂë±»ÈÏÎªÊÇ°üº¬¸Ã´Îµ÷ÓÃµÄÖ´ÐÐ»·¾³µÄÒ»²¿·Ö£¬Òò´Ë±»Ö´ÐÐµÄ´úÂë¾ßÓÐÓë¸ÃÖ´ÐÐ»·¾³ÏàÍ¬µÄ×÷ÓÃÓòÁ´¡£
-eval()ÖÐ´´½¨µÄÈÎºÎ±äÁ¿ºÍº¯Êý¶¼²»»á±»ÌáÉý£¬ÑÏ¸ñÄ£Ê½ÏÂ£¬·ÃÎÊ²»µ½eval()ÖÐ´´½¨µÄ±äÁ¿ºÍº¯Êý
+eval():å°†ä¼ å…¥çš„å‚æ•°å½“ä½œå®žé™…çš„ECMAScriptè¯­å¥æ¥è§£æžï¼Œç„¶åŽæŠŠæ‰§è¡Œç»“æžœæ’å…¥åˆ°åŽŸä½ç½®ã€‚
+é€šè¿‡eval()æ‰§è¡Œçš„ä»£ç è¢«è®¤ä¸ºæ˜¯åŒ…å«è¯¥æ¬¡è°ƒç”¨çš„æ‰§è¡ŒçŽ¯å¢ƒçš„ä¸€éƒ¨åˆ†ï¼Œå› æ­¤è¢«æ‰§è¡Œçš„ä»£ç å…·æœ‰ä¸Žè¯¥æ‰§è¡ŒçŽ¯å¢ƒç›¸åŒçš„ä½œç”¨åŸŸé“¾ã€‚
+eval()ä¸­åˆ›å»ºçš„ä»»ä½•å˜é‡å’Œå‡½æ•°éƒ½ä¸ä¼šè¢«æå‡ï¼Œä¸¥æ ¼æ¨¡å¼ä¸‹ï¼Œè®¿é—®ä¸åˆ°eval()ä¸­åˆ›å»ºçš„å˜é‡å’Œå‡½æ•°
 
 Math
 min(),max()
-ÒªÕÒµ½Êý×éÖÐµÄ×î´ó»ò×îÐ¡Öµ£¬¿ÉÒÔÊ¹ÓÃapply()·½·¨
+è¦æ‰¾åˆ°æ•°ç»„ä¸­çš„æœ€å¤§æˆ–æœ€å°å€¼ï¼Œå¯ä»¥ä½¿ç”¨apply()æ–¹æ³•
 var values = [1,2,3,4,5,6,7,8];
 var max = Math.max.apply(Math, values);
 
 random()
-´ÓÄ³¸öÖ¤Êé·¶Î§ÄÚËæ»úÑ¡ÔñÒ»¸öÖµ
-Öµ = Math.floor(Math.random * ¿ÉÄÜÖµµÃ×ÜÊý + µÚÒ»¸ö¿ÉÄÜµÄÖµ)
-±ÈÈçÇóÒ»¸ö1-10µÄËæ»úÊý
+ä»ŽæŸä¸ªè¯ä¹¦èŒƒå›´å†…éšæœºé€‰æ‹©ä¸€ä¸ªå€¼
+å€¼ = Math.floor(Math.random * å¯èƒ½å€¼å¾—æ€»æ•° + ç¬¬ä¸€ä¸ªå¯èƒ½çš„å€¼)
+æ¯”å¦‚æ±‚ä¸€ä¸ª1-10çš„éšæœºæ•°
 var num = Math.floor(Math.random * 10 + 1);
-·â×°£º
+å°è£…ï¼š
 function selectFrom(lowerValue, upperValue) {
 	var choices = upperValue - lowerValue + 1;
 	return Math.floor(Math.random * choices + lowerValue);
