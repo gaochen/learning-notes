@@ -7,9 +7,9 @@
 
 <p>计划书籍:</p>
 <ol>
-	<li>JavaScript高级程序设计</li>
+	<li>JavaScript高级程序设计(第三版)</li>
 	<li>HTTP权威指南</li>
-	<li>JavaScript设计模式</li>
+	<li>JavaScript设计模式与开发实践--曾探</li>
 </ol>
 
 
