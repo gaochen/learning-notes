@@ -1,0 +1,365 @@
+DOM
+
+章节内容
+·理解包含不同层次节点的DOM
+·使用不同的节点类型
+·客服浏览器兼容性问题及各种陷阱
+
+DOM(文档对象模型)是针对HTML和XML文档的一个API。它描述了一个层次化的节点树，允许开发人员添加、移除和修改页面的某一部分。
+
+文档元素是文档最外层的元素，html页面是html，在xml中可以是任何元素
+
+共有12种类型，都继承自一个基类型
+
+Node类型：
+
+DOM1级定义了一个node接口，做为node类型实现，JS中的所有节点都继承于它
+
+都有nodeType属性，用于表明节点的类型
+
+Node.ELEMENT_NODE(1)
+Node.ATTRIBUTE_NODE(2)
+Node.TEXT_NODE(3)
+Node.CDATA_SECTION_NODE(4)
+Node.ENTITY_REFERENCE_NODE(5)
+Node.ENTITY_NODE(6)
+Node.PROCESSING_INSTRUCTION_NODE(7)
+Node.COMMENT_NODE(8)
+Node.DOCUMENT_NODE(9)
+Node.DOCUMENT_TYPE_NODE(10)
+Node.DOCUMENT_FRAGMENT_NODE(11)
+Node.NOTATION_NODE(12)
+
+确认节点类型
+if （someNode.nodeType == 1） {
+	alert("Node is an element.")
+}
+
+最常用的是元素节点和文本节点，即1 和 3
+
+要想获得具体信息，可以用nodeName和nodeValue
+
+每个节点都有一个childNodes属性，保存着一个NodeList的类数组对象
+
+类数组转变为数组
+function convertyToArray(nodes) {
+	var array = null;
+	try {
+		array = Array.prototype.slice.call(nodes, 0) //针对IE8以上
+	}
+	catch (ex) {
+		//兼容IE6/7/8
+		array = new array();
+		for (var i=0, len = nodes.length; i<len; i++) {
+			array.push(nodes[i]);
+		}
+	}
+
+	return array;
+}
+
+
+每个节点都有一个parentNode属性，指向其父节点
+
+访问同胞节点，previousSibling和nextSibling
+
+操作节点：
+
+appendChild():
+如果把一个父节点的第一个子节点通过appendChild加入到最后，那么第一个节点将变成最后一个节点
+
+insertBefore():
+接受2个参数，插入的节点和参照节点，即将需要插入的节点插入到参照节点前面，若无参照节点，则插入到最后
+
+replaceChild():
+接受2个参数，新的节点和要被替换的节点
+
+removeChild():
+删除节点，返回值是被移除的节点，移除的节点其实仍然在文档中，只是没有了位置
+
+cloneChild():
+参数为true，则深复制，即复制本身和后台；若为false，则浅复制，只复制本身。复制后的节点属于文档，但是没有位置，需要使用前面的方法将其添加到文档中
+
+IE9以前浏览器不会处理空白字符，即只有element节点
+
+document类型：
+
+JS通过Document类型表示文档。在浏览器中，document对象是HTMLDocument的一个实例，表示整个HTML页面
+Document节点的特点：
+nodeType为9
+nodeName的值为‘document’
+nodeValue的值为null
+parentNode的值为null
+ownerDocument的值为null
+
+document.documentElement指向html元素
+
+document.body指向body元素
+
+document.doctype指向<!DOCTYPE>标签
+
+document.title：包含<title>元素的文本
+
+document.URL：取得页面完整的URL
+
+document.domain:取得域名
+
+document.referrer:取得来源页面的URL
+
+只有domain可以设置，但是必须依据URL的域名，可以松散，但是松散之后不能紧绷：
+//假设页面来自p2p.wrox.com
+document.domain = "wrox.com";		// 成功
+document.domain = "p2p.wrox.com"	//失败
+
+由于跨域安全限制，不同子域的页面无法通过JS通信。可以将domain修改成一样的，然后实现互相访问对方的JS对象
+
+查找元素的方法
+getElementById
+getElementsByTagName
+namedItem():通过元素的name属性查找
+getElementsByName
+
+document对象的特殊集合
+document.anchors：包含文档中所有带name特性的<a>元素
+document.applets：包含文档中所有的<applet>元素，不建议使用
+document.forms
+document.images
+document.links：包含文档中所有带href特性的<a>元素
+
+检测浏览器支持到DOM的哪个级别使用document.implementation.hasFeature()
+var hasXmlDom = document.implementation.hasFeature('xml', '1.0');
+
+文档写入
+document.write()
+document.writeln():会在字符串的末尾添加一个换行符（\n）
+
+Element类型
+
+element节点特点：
+·nodeType的值为1
+·nodeName的值为元素的标签名
+·nodeValue的值为null
+·parentNode可能是Document或Element
+·子节点可能是Element、Text、Comment、ProcessingInstruction、CDATASection或EntityReference
+
+获取元素的标签名，可以用nodeName，或者tagName。
+
+在HTML中，标签名都是以大写表示；在XML中，标签名都是与源代码一致
+
+HTML元素
+所有HTML元素都由HTMLElement类型表示，并且每个HTML元素都存在以下标准特性
+id：元素在文档中的唯一标识符
+title：有关元素的附加说明信息
+lang：元素内容的语言代码
+dir：语言的方向，值为“ltr”(left-to-right)或者“rtl”(right-to-left)
+className：即class
+
+<div id="myDiv" class="bd" title="body text" lang="en" dir="ltr"></div> 
+var div = document.getElementById('myDiv');
+div.id => myDiv
+div.className => bd
+div.title => body text
+div.lang => en
+div.dir => ltr
+
+获取特性
+每个元素都有一或多个特性，用于给出相应元素的附加信息。操作特性的主要方法：getAttribute()、setAttribute()、removeAttribute()
+
+attributes属性
+多用于遍历元素特性
+
+创建元素
+document.createElement()
+
+元素的子节点
+元素的childNodes属性包含它的所有子节点
+
+Text类型
+文本节点由Text类型表示，包含可以照字面解释的纯文本内容。可以包含转义后的HTML字符，但不能包含HTML代码。具有以下特点：
+·nodeType的值为3
+·nodeName的值为"#text"
+·nodeValue的值为节点所包含的文本
+·parentNode是一个Element
+·不支持（没有）子节点
+ 
+可以通过nodeValue属性或者data属性访问Text节点所包含的文本
+
+appendData(text)：将text添加到节点的末尾
+deteleData(offset, count)：从offset指定的位置开始删除count字符
+insertData(offset, text)：在offset指定的位置插入text
+replaceData(offset, count, text)：用text替换从offset指定的位置开始到offset+count为止处的文本
+splitText（offset）：从offset指定的位置将当前文本节点分成两个文本几点
+substringData(offset, count)：提取从offset指定的位置开始到offset+count为止处的字符串
+
+length属性：保存着节点中字符的数目。nodeValue.length = data.length
+
+默认情况下，每个包含内容的元素最多只能有一个文本节点，没有内容则为也没有文本节点
+
+document.createTextNode()创建新文本节点
+
+noralize()：将同一个父元素下的文本节点合并成一个节点，做字符串拼接，与splitText()相反
+
+Comment类型
+注释用Comment类型来表示。具有以下特点：
+·nodeType的值为8
+·nodeName的值为"#comment"
+·nodeValue的值是注释的内容
+·parentNode可能是Document或Element
+
+Comment类型和text类型继承自相同的基类，因此它拥有除splitText()之外的所有字符串操作方法。可以通过nodeValue和data属性来获取注释的内容
+
+CDATASection类型
+CDATASection类型只针对基于XML的文档，表示的是CDATA区域。具有以下特点：
+·nodeType的值为4
+·nodeName的值为"#cdata-section"
+·nodeValue的值是CDATA区域中的内容
+·parentNode可能是Document或Element
+
+DocumentType类型
+不常用，只有FireFox、Safari和Opera支持，特点如下：
+·nodeType的值为10
+·nodeName的值为doctype的名称
+·nodeValue的值为null
+·parentNode是Document
+
+DocumentFragment类型
+在文档中没有对应的标记，nodeType的值为11
+
+Attr类型
+元素的特性通过Attr类型来表示，特性就是存在于元素中的attributes属性中的节点，特性节点特点如下：
+·nodeType的值为2
+·nodeName的值是特性的名称
+·nodeValue的值是特性的值
+·parentNode的值为null
+·在HTML中没有子节点
+·在XML中子节点可以是text或EntityReference
+通常使用getAttrbute()、setAttrbute()、和removeAttrbute()方法
+
+10.2 DOM操作技术
+
+10.2.1 动态脚本
+动态插入外部文件
+
+loadScript("client.js");
+
+function loadScript(url) {
+	var script = document.createElment("Script");
+	script.type = "text/javascript";
+	script.src = url;
+	document.body.appendChild(script);
+}
+动态插入JavaScript代码
+
+loadScriptString("function sayHi(){alert('Hi')};");
+
+function loadScriptString(code) {
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+	try {
+		script.appendChild(document.createTextNode(code));
+	} catch(ex) {
+		//IE下不允许访问
+		script.text = code;
+	}
+	document.body.appendChild(script);
+	
+}
+
+10.2.2 动态样式
+动态样式是指在页面刚加载时不存在，等页面加载完之后动态添加到页面中的样式
+<link>元素用于包含来自外部的文件:
+
+loadStyle("styles.css");
+
+function loadStyle(url) {
+	var link = document.createElement("link");
+	link.rel = "stylesheet";
+	link.type = "text/css";
+	link.href = url;
+	var head = document.getElementsByTagName("head")[0];
+	head.appendChild(link);
+}
+
+<style>元素用于指定嵌入的样式:
+
+loadStyleString("body {background-color:red}");
+
+function loadStyleString(css) {
+	var style = document.createElement("style");
+	style.type = "text/css";
+	try {
+		style.appendChild(document.createTextNode(css));
+	} catch(ex) {
+		style.styleSheet.cssText = css;	
+	}
+	var head = document.getElementsByTagName("head")[0];
+	head.appendChild(style);
+}
+
+10.2.3 操作表格
+HTML DOM为<table>、<tbody>、<tr>元素添加了一些属性和方法
+
+为<table>元素添加的属性和方法：
+caption：保存着对<caption>元素的指针
+tBodies：是一个<tbody>元素的HTMLCollection
+tFoot：保存着对<tfoot>元素的指针
+tHead：保存着对<thead>元素的指针
+rows：是一个表格中所有行的HTMLCollection
+createTHead()：创建<thead>元素，将其放到表格中，返回引用
+createTFoot()：创建<tfoot>元素，将其放到表格中，返回引用
+createCaption()：创建<caption>元素，将其放到表格中，返回引用
+deleteTHead()：删除<thead>元素
+deleteTFoot()：删除<tfoot>元素
+deleteCaption()：删除<caption>元素
+deleteRow(pos)：删除指定位置的行
+insertRow(pos)：向rows集合中的指定位置插入一行
+
+为<tbody>元素添加的属性和方法如下：
+row：保存着<tbody>元素中行的HTMLCollection
+deleteRow(pos)：删除指定位置的行
+insertRow(pos)：想rows集合中的指定位置插入一行，返回对新插入行的引用
+
+为<tr>元素添加的属性和方法如下：
+cells：保存着<tr>元素中单元格的HTMLCollection
+deleteCell(pos)：删除指定位置的单元格
+insertCell(pos)：想cells集合中的指定位置插入一个单元格，返回对新插入单元格的引用
+
+代码示例：
+//创建table
+var table = document.createElement("table");
+table.border = 1;
+table.width = 100%;
+
+//创建tbody
+var tbody = document.createElement("tbody");
+table.appendChild(tbody);
+
+//创建第一行
+tbody.insertRow(0);
+tbody.rows[0].insertCell(0);
+tbody.rows[0].cells[0].appendChild(document.createTextNode("cell 1,1"));
+tbody.rows[0].insertCell(1);
+tbody.rows[0].cells[1].appendChild(document.createTextNode("cell 2,1"));
+
+//创建第二行
+tbody.insertRow(1);
+tbody.rows[1].insertCell(0);
+tbody.rows[1].cells[0].appendChild(document.createTextNode("cell 1,2"));
+tbody.rows[1].insertCell(1);
+tbody.rows[1].cells[1].appendChild(document.createTextNode("cell 2,2"));
+
+10.2.4 使用NodeList
+NodeList、NamedNodeMap、HTMLCollection三个集合都是动态的，每当结构发生变化时，他们都会更新
+以下代码会导致无限循环：
+var divs = document.getElementsByTagName("div"),
+    i,
+    div;
+
+for (i=0; i<divs.length; i++) {
+	div = document.createElement("div");
+	document.body.appendChild(div);
+
+}
+
+每一次循环都会重新获取divs，divs和i同时递增，所以会形成无限循环
+如果想迭代一个NodeList，将length属性初始化为一个变量即可，即定义len = divs.length;
