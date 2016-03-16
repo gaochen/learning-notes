@@ -186,4 +186,117 @@ function getStyleSheet(element) {
 var link = document.getElementsByTagName("link")[0];
 var sheet = getStyleSheet(link);
 
- 
+这些操作样式的方法都比较少用，建议多用动态加载样式表的方法
+
+12.2.3 元素大小
+DOM中没有规定如何确定页面元素的大小，但是IE率先引入了一些属性，目前被所有浏览器支持
+1.偏移量
+偏移量包括元素在屏幕上占用的所有可见的空间。元素的可见大小由其高度、宽度决定，包括所有内边距，滚动条和边框的大小(不包括外边距)。
+通过下列4个属性获取元素的偏移量：
+offsetHeight：元素在垂直方向上占用的空间大小，包括元素的高度，(可见的)水平滚动条的高度、上边框高度和下边框高度
+offsetWidth：元素在水平方向上占用的空间大小，包括元素的宽度，(可见的)垂直滚动条的宽度、左边框宽度和左边框宽度
+offsetLeft：元素的左外边框至包含元素的左内边框之间的像素距离
+offsetTop:元素的上外边框至包含元素的上内边框之间的像素距离
+
+要想知道某个元素在页面上的偏移量，将这个元素的offsetLeft和offsetTop与其offsetParent的相同属性想加，如此循环到根元素，就可以
+得到一个相对准确的值，以下是两个函数分别取得元素的左和上偏移量：
+function getElementLeft(element) {
+	var actualLeft = element.offsetLeft;
+	var current = element.offsetParent;
+	
+	while(current != null) {
+		actualLeft += current.offsetLeft;
+		current = current.offsetParent;
+	}
+
+	return actualLeft;
+}
+
+function getElementTop(element) {
+	var actualTop = element.offsetTop;
+	var current = element.offsetParent;
+	
+	while(current != null) {
+		actualTop += current.offsetTop;
+		current = current.offsetParent;
+	}
+
+	return actualTop;
+}
+
+2.客户区大小
+元素的客户区大小是指元素内容及其内边距所占据的空间大小，相关属性有2个：
+clientWidth：元素内容区宽度加上左右内边距宽度
+clientHeight：元素内容区高度加上上下内边距高度
+
+获取浏览器视口大小：
+function getViewport() {
+	if (document.compatMode == "BackCompat") {
+		return {
+			width: document.body.clientWidth,
+			height: document.body.clientHeight
+		}；
+	}
+	else {
+		return {
+			width: document.documentElement.clientWidth,
+			height: document.documentElement.clientHeight
+		};
+	}
+}
+
+3.滚动大小
+滚动大小是指包含滚动内容的元素的大小。
+scrollHeight：在没有滚动条的情况下，元素内容的总高度
+scrollWidth：在没有滚动条的情况下，元素内容的总宽度
+scrollLeft：被隐藏在内容区域左侧的像素数。通过设置这个属性可以改变元素的滚动位置
+scrollTop：被隐藏在内容区域上方的像素数。通过设置这个属性可以改变元素的滚动位置
+
+4.确定元素大小
+getBoundingClientRect()：返回一个矩形对象，包含4个属性：left、top、right和bottom。这些属性给出了元素在页面中
+相对于视口的位置。但是IE8会认为文档左上角左边是(2,2)，IE9及其他浏览器为(0,0)
+兼容函数：
+function getBoundingClientRect(element) {
+
+    var scrollTop = document.documentElement.scrollTop;
+    var scrollLeft = document.documentElement.scrollLeft;
+
+    if (element.getBoundingClientRect) {
+	
+        if (typeof arguments.callee.offset != "number") {
+		
+            var scrollTop = document.documentElement.scrollTop;
+            var temp = document.createElement("div");
+			
+            temp.style.cssText = "position:absolute;left:0;top:0;";
+            document.body.appendChild(temp);
+            arguments.callee.offset = -temp.getBoundingClientRect().top - scrollTop;
+            document.body.removeChild(temp);
+            temp = null;
+        }
+
+        var rect = element.getBoundingClientRect();
+        var offset = arguments.callee.offset;
+
+        return {
+            left: rect.left + offset,
+            right: rect.right + offset,
+            top: rect.top + offset,
+            bottom: rect.bottom + offset
+        }
+    }
+    else {
+
+        var actualLeft = getElementLeft(element);
+        var actualTop = getElementTop(element);
+
+        return {
+            left: actualLeft - scrollLeft,
+            right: actualLeft + element.offsetWidth - scrollLeft,
+            top: actualTop - scrollTop,
+            bottom: actualTop + element.offsetHeight - scrollTop 
+        }
+
+    }
+                
+}
