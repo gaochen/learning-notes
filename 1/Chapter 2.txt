@@ -1,0 +1,87 @@
+第2章 在HTML中使用JavaScript
+
+本章内容
+·使用<script>元素
+·嵌入脚本与外部脚本
+·文档模式对JavaScript的影响
+·考虑禁用JavaScript的场景
+
+2.1 <script>标签
+向HTML页面中插入JavaScript的主要方法，就是使用<script>元素。HTML4.01为<script>定义了6个属性：
+·async：可选。表示应该立即下载脚本，但不妨碍页面中的其他操作，比如下载其他资源或等待加载其他脚本。只对外部脚本有效。
+·charset：可选。表示通过src属性指定的代码的字符集。由于大多数浏览器会忽略它的值，因此很少使用。
+·defer：可选。表示脚本可以延迟到文档完全被解析和显示之后再执行。只对外部脚本有效。IE7及更早版本对嵌入脚本也支持这个属性。
+·language：已废弃。原来用于表示编写代码使用的脚本语言。大多数浏览器忽略这个属性，因此没必要再使用。
+·src：可选。表示包含要执行代码的外部文件。
+·type：可选。可以看成是language的替代属性；表示编写代码使用的脚本语言的内容类型(MIME类型)。该值不是必须的，没有指定也会
+默认为text/javascript。
+
+浏览器在解析嵌入式JavaScript代码或者解析外部JavaScript文件(包括下载该文件)时，页面的处理会暂时停止。
+注意：在引入外部JavaScript文件的<script>元素标签之间写入的JavaScript代码将被忽略
+
+2.1.1 标签位置
+由于浏览器解析页面代码是从上往下依次下载解析的，所以一般将JavaScript代码都放在<body>标签的最后。
+
+2.1.2 延迟脚本
+<script>标签的defer属性可以让外部脚本延迟到整个页面都解析完毕后再运行，相对于告诉浏览器立即下载，但是延迟执行。
+延迟脚本最好只有一个，因为无法保证多个延迟脚本的执行顺序。
+将延迟脚本放在页面底部仍然是最佳做法。
+<script type="text/javascript" defer="defer" src="example.js"></script>
+
+2.1.3 异步脚本
+<script>标签的async属性告诉浏览器立即下载文件，但是标记为async的脚本并不保证按照指定它们的先后顺序执行，例如：
+<script type="text/javascript" async="async" src="example1.js"></script>
+<script type="text/javascript" async="async" src="example2.js"></script>
+在以上代码，第二个脚本文件可能会在第一个脚本文件之前执行，因此确保二者互不依赖很重要。指定async属性的目的是不让页面等待两个脚本下载
+和执行，从而异步加载页面其他内容。为此，建议异步脚本不要在加载期间修改DOM。
+
+2.2 嵌入代码与外部文件
+使用外部文件的优点：
+·可维护性
+·可缓存：多个页面都使用同一个文件的话，文件只需下载一次
+·适应未来：无需担心XHTML对JavaScript代码的影响
+
+2.3 文档模式
+文档模式通过文档类型(doctype)切换实现。
+最初的两种文档模式：混杂模式和标准模式。混杂模式会让IE的行为与(包含非标准特性的)IE5相同，而标准模式则让IE的行为更接近标准行为。主要
+影响CSS内容的呈现，但在某些情况下也会影响到JavaScript的解释执行
+后来IE又引入了准标准模式，但是和标准模式非常接近。后文提到的标准模式是指除了混杂模式之外的其他模式。
+标准模式可以通过下面任何一种文档类型来开启：
+<!-- HTML 4.01 严格型 -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+
+<!-- XHTML 1.0 严格型 -->
+<!DOCTYPE html PUBLIC 
+"-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/xhtml1-strict.dtd">
+
+<!-- HTML 5 -->
+<!DOCTYPE html>
+
+对于非标准模式，则可以通过过渡型(transitional)或框架集型(frameset)文档模式来触发：
+<!-- HTML 4.01 过渡型 -->
+<!DOCTYPE HTML PUBLIC 
+"-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+
+<!-- HTML 4.01 框架集型 -->
+<!DOCTYPE HTML PUBLIC 
+"-//W3C//DTD HTML 4.01 Frameset//EN"
+"http://www.w3.org/TR/html4/frameset.dtd">
+
+<!-- XHTML 1.0 过渡型 -->
+<!DOCTYPE html PUBLIC 
+"-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/xhtml1-transitional.dtd">
+
+<!-- XHTML 1.0 框架集型 -->
+<!DOCTYPE html PUBLIC 
+"-//W3C//DTD XHTML 1.0 Frameset//EN"
+"http://www.w3.org/TR/xhtml1/xhtml1-frameset.dtd">
+
+2.4 <noscript>元素
+<noscript>用以在不支持JavaScript的浏览器中显示替代的内容，达到平稳地退化。出现条件：
+·浏览器不支持脚本
+·浏览器支持脚本，但脚本被禁用
+符合上述任何一条件，浏览器就会显示<noscript>中的内容
