@@ -1,0 +1,54 @@
+第1章 JavaScript简介
+
+本章内容
+·JavaScript历史回顾
+·JavaScript是什么
+·JavaScript与ECMAScript的关系
+·JavaScript的不同版本
+
+JavaScript诞生于1995年
+
+一个完整的JavaScript实现由下列三个不同的部分组成：
+·核心(ECMAScript)：提供核心语言功能
+·文档对象模型(DOM)：提供访问和操作页面内容的方法和接口
+·浏览器对象模型(BOM)：提供与浏览器交互的方法和接口
+
+1.2.1 ECMAScript
+由ECMA-262定义的ECMAScript与Web浏览器没有依赖关系。ECMA-262定义的只是这门语言的基础，而在此基础上可以构建更完善
+的脚本语言。Web浏览器只是ECMAScript实现可能的宿主环境之一。宿主环境不仅提供基本的ECMAScript实现，同时也会提供语
+言的扩展，以便语言与环境之间对接交互。而这些扩展--如DOM，则利用ECMAScript的核心类型和语法提哦给你更多更具体的功
+能，以便实现针对环境的操作。其他宿主环境包括Node(一种服务端JavaScript平台)和Adobe Flash。
+
+ECMA-262标准规定了这门语言的下列组成部分：
+·语法
+·类型
+·语句
+·关键字
+·保留字
+·操作符
+·对象
+
+1.2.2 文档对象模型(DOM)
+文档对象模型(DOM，Document Object Model)是针对XML但经过扩展用于HTML的应用程序编程接口(API，Application Programming Interface)。
+DOM把整个页面映射为一个多层节点结构。HTML或XML页面中的每个组成部分都是某种类型的节点，这些节点又包含着不同类型的数据。
+
+1.为什么使用DOM
+保持Web跨平台性，防止浏览器厂商在技术上割据，造成浏览器互不兼容，于是负责指定Web通信标准的W3C开始规划DOM
+
+2.DOM级别
+DOM1级由两个模块组成：DOM核心和DOM HTML。
+DOM2级在原来DOM的基础上又扩充了鼠标和用户界面事件、范围、遍历等细分模块，而且通过对象接口增加了对CSS的支持
+DOM3级则进一步扩展了DOM，引入了DOM加载和保存，新增了DOM验证模块
+
+1.2.3 浏览器对象模型(BOM)
+从根本上讲，BOM只处理浏览器窗口和框架，但人们习惯上也把所有针对浏览器的JavaScript扩展算作BOM的一部分，下面就是一些扩展；
+·弹出新浏览器窗口的功能
+·移动、缩放和关闭浏览器窗口的功能
+·提供浏览器详细信息的navigator对象
+·提供浏览器所加载页面的详细信息的location对象
+·提供用户显示器分辨率详细信息的screen对象
+·对cookies的支持
+·像XMLHttpRequest和IE的ActiveXObject这样的自定义对象。
+
+
+
