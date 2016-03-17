@@ -300,3 +300,75 @@ function getBoundingClientRect(element) {
     }
                 
 }
+
+12.3 遍历
+"DOM2级遍历和范围"模块定义了两个辅助完成顺序遍历DOM结构和类型：NodeIterator和TreeWalker。这两个类型能够基于
+给定的起点对DOM结构执行深度优先(depth-first)的遍历操作
+兼容性：IE9+
+
+12.3.1 NodeIterator
+可以使用document.createNodeIterator()方法创建它的新实例，接收4个参数：
+root：想要作为搜索起点的树中的节点
+whatToShow：表示要访问哪些节点的数字代码
+filter：是一个NodeFilter对象，或者是一个表示应该接受还是拒绝某种特定节点的函数
+entityReferenceExpansion：布尔值，表示是否要扩展实体引用
+NodeIterator类型主要有2个方法，nextNode()和previousNode()
+以下面HTML片段为例：
+<div id="div1">
+	<p><b>Hello</b>world!</p>
+	<ul>
+		<li>List item 1</li>
+		<li>List item 2</li>
+		<li>List item 3</li>
+	</ul>
+</div>
+遍历<div>中所有元素：
+var div = document.getElementById("div1");
+var iterator = document.createNodeIterator(div, NodeFilter, NodeFilter.SHOW_ELEMENT, null, false);
+var node = iterator.nextNode();
+while (node != null) {
+	alert(node.tagName);
+	node = iterator.nextNode();
+}
+
+输出结果为：DIV P B UL LI LI LI
+
+如果只想遍历<li>元素，只需添加一个过滤器，修改上面的代码：
+//添加过滤器
+var filter = function(node) {
+	return node.tagName.toLowerCase() == "li" ?
+		NodeFilter.FILTER_ACCEPT :    // 接收
+		NodeFilter.FILTER_SKIP ;	  // 跳过
+};
+//创建NodeIterator时，传入过滤器参数 
+var iterator = document.createNodeIterator(div, NodeFilter, NodeFilter.SHOW_ELEMENT, filter, false);
+
+12.3.2 TreeWalker
+TreeWalker是NodeIterator的一个更高级版本，除了nextNode()和previousNode()外，还提供以下遍历DOM结构的方法：
+parentNode()：遍历到当前节点的父节点
+firstChild()：遍历到当前节点的第一个子节点
+lastChild()：遍历到当前节点的最后一个子节点
+nextSibling()：遍历到当前节点的下一个同辈节点
+previousSibling()：遍历到当前节点的上一个同辈节点
+创建TreeWalker要使用document.createTreeWalker()方法，接收4个参数和createNodeIterator方法一样
+var walker = document.createTreeWalker(div, NodeFilter.SHOW_ELEMENT, filter, false);
+
+TreeWalker的fliter的返回值还可以是NodeFilter.FILTER_REJECT，表示跳过相应节点及该节点的整个子节点。
+
+使用TreeWalker遍历DOM树，即使不定义过滤器，也可以得到我们想要的<li>元素，代码如下：
+var div = document.getElementById("div1");
+var walker = document.createTreeWalker(div, NodeFilter.SHOW_ELEMENT, null, false);
+
+walker.firstChild();	//转到<p>
+walker.nextSibling();	//转到<ul>
+
+var node = walker.firstChild();		//转到第一个<li>;
+while (node != nul) {
+	alert(node.tagName);
+	node = walker.nextSibling();
+}
+
+注：由于IE中没有对应的类型和方法，所以使用遍历的跨浏览器解决方案非常少见
+
+12.4 范围
+暂时省略
