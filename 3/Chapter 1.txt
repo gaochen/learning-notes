@@ -99,3 +99,179 @@ JavaScript作为一门动态类型语言，它在编译时没有类型检查的�
 中可以用高阶函数来代替实现的原因。
 
 1.3 封装
+封装的目的是将内容隐藏。更广义的封装，不仅包括封装数据和封装实现，还包括封装类型和封装变化。
+
+1.3.1 封装数据
+许多语言的封装数据是由语法解析来实现的，提供了private、public、protected等关键字来提供不同的访问权限。
+JavaScript只能依赖变量的作用域来实现封装特性，而且只能模仿出private和public这两种特性
+除了ECMAScript6中提供的let之外，一般通过函数来创建作用域：
+var myObject = (function() {
+	var __name = 'sven';	// 私有变量
+	return {
+		getName: function() {	// 公有方法
+			return __name;
+		}
+	}
+})();
+
+console.log(myObject.getName());	// sven
+console.log(myObject.__name);	// undefined
+
+在ECMAScript6中，还可以通过Symbol创建私有属性。
+
+1.3.2 封装实现
+从封装实现的细节来讲，封装使得对象内部的变化对其他对象而言是不可见的。对象之间只通过暴露的API接口来通信。
+当我们修改一个对象时，可以随便修改它的内部实现，只要对外的接口没有变化，就不会影响到程序的其他功能。
+
+1.3.3 封装类型
+封装类型是静态语言中的一种重要的封装方式，通过抽象类和接口来进行，把对象的真正类型隐藏在抽象类和接口
+之后，比如工厂方法模式、组合模式等。
+在JavaScript中没有抽象类和接口，JavaScript没必要过多的关注封装类型
+
+1.3.4 封装变化
+从设计模式的角度出发，封装在更重要的层面体现为封装变化。
+通过封装变化，把系统中稳定不变的部分和容易变化的部分隔离开来，在系统的演变中，只需要替换那些容易变化
+的部分。这可以最大程度上保证程序的稳定性和可扩展性。
+
+1.4 原型模式和基于原型继承的JavaScript对象系统
+第一个设计模式--原型模式
+
+1.4.1 使用克隆的原型模式
+原型模式是一种用于创建对象的模式。如果我们想创建一个对象，一种方法是先指定它的类型，然后通过类来创建
+这个对象。原型模式则不用关心对象的具体类型，而是找到一个对象，然后通过克隆来创建一个一模一样的对象。
+原型模式的实现关键，是是否有clone方法。ECMAScript5提供了Object。create方法，可以用来克隆对象：
+var Plane = function(){
+	this.blood = 100;
+	this.attackLevel = 1;
+	this.defenseLevel = 1;
+};
+
+var plane = new Plane();
+plane.blood = 500;
+plane.attackLevel = 10;
+plane.defenseLevel = 7;
+
+var clonePlane = Object.create(plane);
+console.log(clonePlane);	// Object {blood:500, attackLevel:10, defenseLevel:7}
+
+在不支持Object.create()方法的浏览器中，可以使用以下代码：
+Object.create = Object.create || function(obj) {
+	var F = function(){};
+	F.prototype = obj;
+	return new F();
+}
+
+1.4.2 克隆是创建对象的手段
+
+1.4.4 原型编程范型的一些规则
+基本规则：
+·所有的数据都是对象
+·要得到一个对象，不是通过实例化类，而是找到一个对象作为原型并克隆它
+·对象会记住它的原型
+·如果对象无法响应某个请求，它会把这个请求委托给它自己的原型
+
+1.4.5 JavaScript中的原型继承
+JavaScript也遵守上述规则
+1.所有的数据都是对象
+JavaScript有两套类型机制：基本类型和对象类型。按照设计的本意，除了undefined之外，一切都应是对象。
+为了实现这一目标，number、boolean、string这几种基本类型数据也可以通过"包装类"的方式变成对象类型
+数据来处理
+JavaScript中的绝大部分数据都是对象，它们的根对象是Object.prototype对象。Object.prototype对象是一个
+空对象，JavaScript的每个对象都是从它克隆而来的
+var obj1 = new Object();
+var obj2 = {};
+
+console.log(Object.getPrototypeOf(obj1) == Object.prototype);	// true
+console.log(Object.getPrototypeOf(obj2) == Object.prototype);	// true
+
+2.要得到一个对象，不是通过实例化类，而是找到一个对象作为原型并克隆它
+使用new运算符从构造器中得到一个对象：
+function Person(name) {
+	this.name = name;
+};
+
+Person.prototype.getName = function() {
+	return this.name;
+};
+
+var a = new Person('sven');
+
+console.log(a.name);	// sevn
+console.log(a.getName)	// sevn
+console.log(Object.getPrototypeOf (a) === Person.prototype);	// true
+
+在这里Person不是类，而是函数构造器，JavaScript中的函数既可以作为普通函数被调用，也可以作为构造器被调用。
+当使用new运算符来调用函数时，此时的函数就是一个构造器。
+
+在Chrome和FireFox等向外暴露了对象__proto__属性的浏览器下，可以通过下面这段代码来理解new运算的过程：
+function Person() {
+	this.name = name;
+};
+
+Person.prototype.getName = function() {
+	return this.name;
+};
+
+var objectFactory = function() {
+	var obj = new Object(),		// 从Object.prototype上克隆一个空对象
+		Construtor = [].shift.call(arguments);		// 取得外部传入的构造器，此例是Person
+		obj.__proto__ = Construtor.prototype;	 	//指向正确的原型
+		var ret = Construtor.apply(obj, arguments);		//借用外部传入的构造器给obj设置属性
+		
+		return typeof ret == 'object' ? ret : obj;		//确保构造器总是会返回一个对象
+}；
+
+var a = objectFactory(Person, 'sevn');
+
+console.log(a.name);	// sevn
+console.log(a.getName)	// sevn
+console.log(Object.getPrototypeOf (a) === Person.prototype);	// true
+
+可见，同上面的new方法产生了一样的结果
+
+3.对象会记住它的原型
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
