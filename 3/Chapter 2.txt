@@ -1,0 +1,136 @@
+第2章 this、call和apply
+
+2.1 this
+JavaScript的this总是指向一个对象，而具体指向哪个对象是在运行时基于函数的执行环境动态绑定的，而非函数被声明
+时的环境。
+
+2.1.1 this的指向
+除去不常用的with和eval的情况，具体到实际应用中，this的指向大致可以分为以下4种：
+·作为对象的方法调用
+·作为普通函数调用
+·构造器调用
+·Function.prototype.call或Function.prototype.apply调用
+
+1.作为对象的方法调用
+当函数作为对象的方法被调用时，this指向该对象：
+var obj = {
+	a:1,
+	getA: function() {
+		alert(this === obj);	// true
+		alert(this.a);			// 1
+	}
+};
+obj.getA();
+
+2.作为普通函数调用
+当函数不作为对象的属性被调用时，也就是我们常说的普通函数方式，此时的this总是指向全局对象。
+window.name = 'globalName';
+var getName = function() {
+	return this.name;
+};
+console.log(getName());		// globalName
+或者：
+window.name = "globalName";
+var myObject = {
+	name: 'sven';
+	getName: function() {
+		return this.name;
+	}
+};
+var getName = myObject.getName;
+console.log(getName());		// globalName
+特殊情况：比如在div节点的事件函数内部，有一个局部的callback方法，callback被作为普通函数调用时，callback
+内部的this指向了window，但我们往往是想让他指向该div节点，代码如下：
+<div id="div1">我是一个div</div>
+
+window.id = "window";
+document.getElementById("div1").onclick = function() {
+	alert(this.id);		// div1
+	var callback = function(){
+		alert(this.id);		// window
+	}
+	callback();
+};
+
+简单的解决办法是用一个变量将div节点保存起来用于以后调用，如var that = this;
+
+但是在ES5的strict模式下，作为普通函数调用的this已经被规定为不会指向全局对象，而是undefined。
+
+3.构造器调用
+除了宿主提供的一些内置函数，大部分JavaScript函数都可以当作构造器使用。构造器与普通函数的区别在于使用
+new运算符调用，此时会返回一个对象，通常情况下，构造器里的this就指向返回的这个对象：
+var MyClass = function(){
+	this.name = 'sven';
+};
+
+var obj = new MyClass();
+alert(obj.name);	// sven
+
+注意：如果构造器显式的返回一个object类型的对象，那最终结果将返回这个对象，即this指向这个对象。
+
+4.Function.prototype.call或Function.prototype.apply调用
+这两个函数可以动态地改变传入函数的this
+
+2.1.2 丢失的this
+如前面this作为普通函数调用时，如果函数被赋值引用后，则会导致this指向window
+
+2.2 call和apply
+2.2.1 call和apply的区别
+它们的区别仅在与传入参数的形式不同
+apply的参数要作为数组参数，call的参数直接依次传入
+
+有时候使用call或apply的目的不在于指定this指向，而是有其他用途，比如借用其他对象的方法。这时可以传入null
+来代替某个具体的对象：
+Math.max.apply(null,[1,2,3,4,5])	// 5
+
+2.2.2 call和apply的用途
+1.改变this指向
+
+2.Function.prototype.bind
+模拟实现Function.prototype.bind方法：
+//简化版
+Function.prototype.bind = function(context) {
+	var self = this;		// 保存原函数
+	return function() {		// 返回一个新的函数
+		returun self.apply(context, aruguments);	// 执行新函数的时候，会出入之前的context
+													// 当作新函数体内的this
+	}
+};
+
+//加强版
+Function.prototype.bind = function(){
+	var self = this,	// 保存原函数
+		context = [].shift.call(aruguments),	// 需要绑定的this上下文
+		args = [].slice.call(aruguments);		// 剩余的参数转成数组
+	return function() {		// 返回一个新的函数
+		return self.apply(context, [].concat.call(args, [].slice.call(aruguments)));
+		// 执行新函数的时候，会出入之前的context作为新函数体内的this
+		// 并且组合两次分别传入的参数，作为新函数的参数
+	}
+};
+
+3.借用其他对象的方法
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
