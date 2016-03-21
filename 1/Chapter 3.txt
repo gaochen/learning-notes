@@ -59,5 +59,113 @@ typeof操作符检测null值时会返回"object"的原因。
 实际上，undefined值是派生自null值得，因此ECMA-262规定对它们的相等性测试要返回true:
 alert(null == undefined)	// true
 
+3.4.4 Boolean类型
+Boolean只有2个值：ture和fals。区分大小写，True和False等都不是Boolean值，只是标识符。要将一个值转行为对应的Boolean值，
+可以使用函数Boolean():
+var message = "Hello";
+var messageAsBoolean = Boolean(message);
+以下值调用Boolean函数返回为false：
+字符串：空字符串
+数字：0和NaN
+对象：null
+Undefined：undefined
+
+3.4.5 Number类型
+1.浮点数值
+浮点数值就是该数值中必须包含一个小数点，并且小数点后面必须至少有一个数字。因为保存浮点数值所需的内存空间时整数型的两倍，
+因此当小数点后面没有跟任何数字或者全是0时，都将被转换为整数。
+注：浮点数计算可能会出现误差，如0.1加0.2的结果不是0.3，而是0.300000000000000004
+
+2.数值范围
+由于内存限制，ECMAScript不能保存世界上所有的数值，当计算结果超出JavaScript数值范围的值时，结果将会自动被转换为Infinity值。
+通过isFinite()函数，可以判断一个数值是不是有穷的。
+
+3.NaN
+NaN，即非数值(Not a Number)是一个特殊的数值，这个数值用于表示一个本来要返回数值的操作数未返回数值的情况。NaN与任何值都不等，
+包括它自身。ECMAScript定义了isNaN()函数，用于确定传入的参数是否“不是数值”。
+
+4.数值转换
+有3个函数可以将非数值转换为数值：Number()、parseInt()和parseFloat().
+Number()可以用于任何数据类型，转行规则如下：
+·如果是Boolean值，true和false将分别被转换为1和0
+·如果是数字值，只是简单的传入和返回
+·如果是null值，返回0
+·如果是undefined，返回NaN
+·如果是字符串，规则如下：
+·如果字符串只包含数组(包含正负号)，则将其转换为十进制数值
+·如果字符串包含有效的浮点格式，则将其转换为对应的浮点数值
+·如果字符串中包含有效的十六进制格式，则将其转换为对应的十进制数值
+·如果字符串是空，则转换为0
+·如果字符串不是以上类型，则转为为NaN，如Number(“hello”)返回NaN
+·如果是对象，则调用对象的valueOf()方法，然后依照前面的规则转换返回的值。如果转换结果为NaN，则调用对象的toString()方法，然后再依照
+前面的规则转换
+
+parseInt()实例：
+parseInt("1234blue");		// 1234blue
+parseInt("blue1234");		// NaN
+parseInt("");				// NaN
+parseInt("0xA");			// 10 (十六进制数)
+parseInt("22.5");			// 22
+parseInt("070");			// 56 (八进制)
+parseInt("70");				// 70 (十进制)
+注意：如果是要转换十进制，八进制，十六进制的数值，最好传入第二个参数：转换时使用的基数(即多少进制)：
+parseInt("0xAF", 16)		// 175
+parseInt("070", 8);			// 56
+parseInt("070", 10);		// 70
+
+parseFloat()只解析十进制值：
+parseFloat("1234blue");		// 1234
+parseFloat("0xA");			// 0
+parseFloat("22.5");			// 22.5
+parseFloat("22.34.5");		// 22.34
+parseFloat("0980.5");		// 908.5
+parseFloat("3.125e7");		// 31250000
+
+3.4.6 String类型
+1.字符串字面量
+String数据类型包含一些特殊的字符字面量，也叫转义序列，用于表示非打印字符，或者具有其他用途的字符。
+
+2.字符串的特点
+ECMAScript中的字符串是不可变的，即一旦创建，就不能改变。要改变某个变量保存的字符串，首先要销毁原来的字符串，然后再用另一个包含新
+值得字符串填充该变量。
+
+3.转换为字符串
+toString():若调用数值的toString()方法，可以传入参数表示输出数值的基数(即多少进制)，null和undefined没有这个方法。
+String():转换规则如下：
+·如果值有toString()方法，则调用该方法返回结果
+·如果值是null，则返回null
+·如果值是undefined，则返回undefined
+
+3.4.7 Object类型
+ECMAScript中的对象其实就是一组数据和功能的集合。对象可以通过执行new操作符后跟要创建的对象类型的名称来创建。Object类型是所有它的
+实例的基础，即Object类似所具有的任何属性和方法也通用存在于更具体的对象中。
+Object的每个实例都具有下列属性和方法：
+·construtor：保存着用于创建当前对象的函数
+·hasOwnProperty(propertyName)：用于检查特点的属性在当前对象实例中(不是在实例的原型中)是否存在。其实，作为参数的属性名必须以字符串
+形式指定
+·isPrototypeOf(object)：用于检查传入的对象是否是传入对象的原型
+·propertIsEnumerable(propertyName)：用于检查给定的属性是否能够使用for-in语句来枚举。参数必须是字符串
+·toLocaleString()：返回对象的字符串表示，该字符串与执行环境的地区对应
+·toString()：返回对象的字符串表示
+·valueOf()：返回对象的字符串、数值或布尔值表示。通常与toString()方法的返回值相同。
+
+3.5 操作符
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
