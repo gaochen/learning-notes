@@ -207,8 +207,65 @@ setCommand(createCommand(Tv));
 要解决循环引用带来的泄漏问题，只需要把循环引用中的变量设为null，这样变切断了变量与它之前引用的值之间的连接
 
 3.2 高阶函数
+高阶函数是指至少满足下列条件之一的函数：
+·函数可以作为参数被传递
+·函数可以作为返回值输出
 
+3.2.1 函数作为参数传递
+把函数当作参数传递，可以抽离出一部分容易变化的业务逻辑，把这部分业务逻辑放在函数参数中，这样一来可以分离
+业务代码中变化与不变的部分。
+1.回调函数
+在ajax异步请求的应用中，回调函数的使用非常频繁，把callback函数当作参数传入发起ajax请求的方法中，待请求
+完成之后执行callback函数：
+var getUserInfo = function(userId, callback) {
+	$.ajax('http://xxx.com/getUserInfo?'+userId, function(data) {
+		if (typeof callback == 'function') {
+			callback(data);
+		}
+	});
+}
+getUserInfo(13157, function(data) {
+	alert(data.userName);
+});
 
+当一个函数不适合执行一些请求时，我们也可以把这些请求封装成一个函数，并把它作为参数传递给另外一个函数，
+“委托”给另外一个函数来执行。
+比如创建100个div，并且都设置为隐藏：
+var appendDiv = function() {
+	for (var i=0; i<100; i++) {
+		var div = document.createElement('div');
+		div.innerHTML = i;
+		document.body.appendChild(div);
+		div.style.display = 'none';
+	}
+};
+appendDiv();
+这段代码中，div.style.display = 'none'不适合复用，这时候就可以将它抽离出来，用回调函数的形式传入appendDiv
+中：
+var appendDiv = function(callback) {
+	for (var i=0; i<100; i++) {
+		var div = document.createElement('div');
+		div.innerHTML = i;
+		document.body.appendChild(div);
+		if (typeof callback === 'function') {
+			callback(div);
+		}
+	}
+};
+appendDiv(function(node) {
+	node.style.display = 'none';
+});
+
+2.Array.prototype.sort
+Array.prototype.sort接受一个函数当作参数，可以使其以不同的方式来实现排序：
+//从小到大排列
+[1,4,3].sort(function(a,b) {
+		return a-b;
+});
+//从大到小排列
+[1,4,3].sort(function(a,b) {
+		return b-a;
+});
 
 
 
