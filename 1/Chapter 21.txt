@@ -1,0 +1,212 @@
+第21章 Ajax与Comet
+
+本章内容
+·使用XMLHttpRequest对象
+·使用XMLHttpRequest事件
+·跨域Ajax通信的限制
+
+21.1 XMLHttpRequest对象
+在IE中使用XHR对象
+function createXHR() {
+	if (typeof XMLHttpRequest != 'undefined') {
+		return new XMLHttpRequest;
+	}
+	else if(typeof ActiveXObject != 'undefined') {
+		if (typeof arguments.callee.activeXString != 'string') {
+			var versions = ["MSXML2.XMLHttp.6.0","MSXML2.XMLHttp.3.0","MSXML2.XMLHttp"],
+				i,len;
+				
+			for (i=0,len=versions.length; i<len; i++) {
+				try {
+					new ActiveXObject(versions[i]);
+					arguments.callee.activeXString = versions[i];
+					break;
+				}
+				catch (ex) {
+					//跳过
+				}
+			}
+		}
+		return new ActiveXObject(arguments.callee.activeXString);
+	} 
+	else {
+		throw new Error("No XHR object available.");
+	}
+}
+这个函数首先检测原生XHR对象是否存在，如果存在则返回它的新实例。如果原生对象不存在，则检查ActiveX对象。如果这两种对象都不存在，就抛出
+一个错误。
+
+21.1.1 XHR的用法
+使用XHR对象时，第一个调用的是open()方法，它接收3个参数：要发送的请求的类型("get"、"post"等)、请求的URL和表示是否异步发送请求的
+布尔值。例子：
+XHR.open("get", "example.php", false);
+这行代码会启动一个针对example.php的GET请求，注意：
+·URL相当于执行代码的当前页面(也可以使用绝对路径)
+·调用open()方法并不会真正发送请求，而只是启动一个请求以备发送
+
+要发送特点的请求，必须调用send()方法：
+xhr.open("get", "example.txt", false);
+xhr.send(null);
+
+send()方法接收一个参数，即要作为请求主体发送的数据。如不需要传送数据，则填入null。调用send()之后，请求就会被分派到服务器。
+由于请求是同步的，所以JavaScript代码会等到服务器响应之后再继续执行。在收到响应后，响应的数据会自动填充XHR对象的属性，相关属性如下：
+·responseText；作为响应主体被返回的文本
+·responseXML：如果响应的内容类型是"text/xml"或"application/xml"，这个属性中将保存包含着响应数据的XML DOM文档
+·status：响应的HTTP状态
+·statusText：HTTP状态的说明
+在接收到响应后，第一步是检查status属性，以确定是否成功返回响应。将HTTP状态码200作为成功的标志。这时候responseText属性的内容已经
+就绪，而且在内容类型正确的情况下，responseXML也应该能够访问了。状态码为304表示请求的资源并没有被修改，可以直接使用浏览器缓存的版本，
+为确保接收到适当的响应，代码如下：
+if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304) {
+	alert(xhr.responseText);
+}
+else {
+	alert("Request was unsuccessful：" + xhr.status);
+}
+
+以上是发送同步请求，但是多数情况下，应该发送异步请求，这样JavaScript可以继续执行后续代码而不用等待。此时可以检测XHR对象的readyState
+属性，该属性表示请求/响应过程的当前活动阶段。可取值如下：
+·0：未初始化。尚未调用open()方法
+·1：启动。已经调用open()方法，但尚未调用send()方法
+·2：发送。已经调用send()方法，但尚未接收到响应
+·3：接收。已经接收到部分响应数据
+·4：完成。已经接收到全部响应数据，而且已经可以在客户端使用
+只要readyState属性的值改变，都会触发一下readystatechange事件。通常我们只需检测readyState的值是否为4，以确定数据是否都已就绪。但是
+必须在调用open()之前就指定onreadystatechange事件处理程序才能保证跨浏览器兼容性：
+var xhr = createXHR();
+xhr.onreadystatechange = function() {
+	if (xhr.readyState == 4) {
+		if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 340) {
+			alert(xhr.responseText);
+		}
+		else {
+			alert("Request was unsuccessful：" + xhr.status);
+		}
+	}
+};
+xhr.open("get", "example.php", true);
+xhr.send(null);
+另外，在接收响应之前还可以调用abort()方法来取消异步请求，如下：
+xhr.abort();
+调用这个方法之后，XHR对象会停止触发事件，而且也不再允许访问任何与响应有关的对象属性。
+
+21.1.2 HTTP头信息
+每个HTTP请求和响应都会带有相应的头部信息，XHR对象也提供了操作这两种头部信息的方法：
+默认情况下，在发送XHR请求的同时，还会发送下列头部信息：
+·Accepte：浏览器能够处理的内容类型
+·Accept-Charset：浏览器能够显示的字符集
+·Accept-Encodeing：浏览器能够处理的压缩编码
+·Accept-Language；浏览器当前设置的语言
+·Connection：浏览器与服务器之间连接的类型
+·Cookie：当前页面设置的任何Cookie
+·Host：发出请求的页面所在的域
+·Referer：发出请求的页面的URI
+·User-Agent：浏览器的用户代理字符串
+使用setRequestHeader()方法可以设置自定义的头部信息，接受两个参数：头部字段的名称和值。要成功发送请求头部信息，必须在调用open()
+方法之后且调用send()方法之前调用setRequestHeader()。
+调用getResponseHeader()方法并传入头部字段名称，可以获取相应响应头部信息
+调用getAllResponseHeader()方法可以取得包含一个所有头部信息的长字符串
+
+21.1.3 GET请求
+GET是最常见的请求类型，必要时可以将查询字符串参数追加到URL的末尾，以便讲信息发送给服务器。
+查询字符串的格式必须正确才能放到URL的末尾，辅助函数：
+function addURLParam(url, name, value) {
+	url += (url.indexOf("?") == -1 ? "?" : "&");
+	url += encodeURIComponent(name) + "=" + encodeURIComponent(value);
+	return url;
+}
+这个函数首先检查URL是否包含问号(以确定是否已经有参数存在)。如果没有，就添加一个问号；否则，就添加一个和号。然后，将参数名称和值
+进行编码，再添加到URL的末尾。
+
+21.1.4 POST请求
+POST请求通常用于向服务器发送应该被保存的数据。POST请求应该把数据作为请求的主体提交，给GET请求传统上不是这样的。POST请求的主体可以
+包含非常多的数据，而且格式不限。初始化一个POST请求：
+xhr.open("post", "example.php", true);
+发送POST请求的第二步就是向send()方法中传入某些数据。可以是XML DOM文档或者其他任何字符串。
+默认情况下，服务器对PSOT请求和提交Web表单的请求并不会一视同仁。可以通过XHR来模仿表单提交：首先将Content-Type头部信息设置为
+application/x-www-form-urlencoded，也就是表单提交时的内容类型，其次是以适当的格式创建一个字符串。POST数据的格式与查询字符串格式
+相同，如果需要将页面中的表单的数据进行序列化，然后再通过XHR发送到服务器，那么可以使用serialize()函数来创建这个字符串：
+function() {
+	var xhr = createXHR();
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState == 4) {
+			if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 340) {
+				alert(xhr.responseText);
+			}
+			else {
+				alert("Request was unsuccessful：" + xhr.status);
+			}
+		}
+	};
+	xhr.open("post", "example.php", true);
+	xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	var form = document.getElementById("user-info");
+	xhr.send(serialize(form));
+}
+这个函数可以将表单中的数据序列化之后发送给服务器。这样PHP文件就可以通过$_POST获取数据了。如果不设置Content-Type头部信息，那么发送
+到服务器的数据就不会出现在$_POST中，要访问通用的数据就必须借助$HTTP_RAW_POST_DATA
+
+21.2 XMLHttpRequest 2级
+21.2.1 FormData
+21.2.2 超时设定
+21.2.3 overrideMimeType()方法
+
+21.3 进度事件
+Progress Events规范是W3C的一个工作草案，定义了与客户端服务器通信有关的事件。这些事件最早其实只针对XHR操作，但目前也被其他API借鉴。
+有以下6个进度事件：
+·loadstart：在接收到响应数据的第一个字节时触发
+·progress：在接收响应期间持续不断地触发
+·error：在请求发生错误时触发
+·abort：在因为调用abort()方法而终止连接时触发
+·load：在接收到完整的响应数据时触发
+·loadend：在通信完成或者触发error、abort或load事件后触发
+每个请求都是从出发loadstart事件开始，接下来是一个或多个progress事件，然后触发error、abort或load事件中的一个，最后以触发loadend事件
+结束。
+兼容性：IE10+
+
+21.3.1 load事件
+21.3.2 progress事件
+
+21.4 跨源资源共享
+通过XHR实现Ajax通信的一个主要限制，来源于跨域安全策略。默认情况下，XHR对象只能访问与包含它的页面位于同一个域中的资源。这种安全策略
+可以预防某些恶意行为。但是，实现合理的跨域请求对开发某些浏览器应用程序也是至关重要的。
+CORS(跨源资源共享)是W3C的一个工作草案，定义了在必须访问跨源资源时，浏览器与服务器应该如何沟通。CORS背后的基本思想，就是使用自定义
+的HTTP头部让浏览器与服务器进行沟通，从而决定请求或响应是应该成功，还是应该失败。
+比如一个简单额使用GET或POST发送的请求，它没有自定义的头部，而主体内容时text/plain。在发送该请求时，需要给它附加一个额外的Origin
+头部，其中包含请求页面的源信息(协议、域名和端口)，以便服务器根据这个头部信息啦决定是否给予响应。下面是一个Origin头部的示例：
+Origin：http://www.nczonline.net
+如果服务器认为这个请求可以接受，就在Access-Control-Allow-Origin头部中回发相同的源信息(如果是公共资源，可以回发"*")。例如：
+Access-Control-Allow-Origin：http://www.nczonline.net
+如果没有这个头部，或者有这个头部但源信息不匹配，浏览器就会驳回请求。正常情况下，浏览器会处理请求。注意，请求和响应都不包含cookie信息
+
+21.4.1 IE对CORS的实现
+微软在IE8中引入了XDR类型。这个对象与XHR类型，但能实现安全可靠的跨域通信。XDR对象的安全机制部分实现了W3C的CORS规范。以下是XDR与XHR
+的一些不同之处：
+·cookie不会随请求发送，也不会随响应返回
+·只能设置请求头部信息中的Content-Type字段
+·不能访问响应头部信息
+·只支持GET和POST请求
+XDR对象的使用：
+var xdr = new XDomainRequest();
+xdr.onload = function() {
+	alert(xdr.responseText);
+};
+xdr.onerror = function() {		//用于检查错误
+	alert("An error occurred.");
+}
+xdr.open("get", "http://www.somewhere-else.com/page/");
+xdr.send(null);
+在接收响应之后，只能访问响应的原始文本，没有办法确定响应的状态码。而且，只要响应有效就会触发load事件。如果失败就会触发error事件。
+在请求返回前调用abort()方法可以终止请求：
+adr.abort(); 
+XDR对象也支持timeout属性以及ontimeout事件处理程序。
+为了支持POST事件，XDR对象提供了contentType属性，用来表示发送数据的格式，这个属性是通过XDR对象影响头部信息的唯一方式
+
+21.4.2 其他浏览器对CORS的实现
+
+
+
+
+
+
+
