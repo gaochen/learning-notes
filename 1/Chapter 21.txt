@@ -203,9 +203,198 @@ XDR对象也支持timeout属性以及ontimeout事件处理程序。
 为了支持POST事件，XDR对象提供了contentType属性，用来表示发送数据的格式，这个属性是通过XDR对象影响头部信息的唯一方式
 
 21.4.2 其他浏览器对CORS的实现
+其他主流浏览器都通过XMLHttpRequest对象实现了对CORS的原生支持。在尝试打开不同来源的资源时，无需额外编写代码就可以触发这个行为。
+要请求位于另一个域中的资源，使用标准的XHR对象并在open()方法中传入绝对URL即可，例如：
+var xhr = createXHR();
+xhr.onreadystatechange = function() {
+	if (xhr.readyState == 4) {
+		if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304) {
+			alert(xhr.responseText);
+		}
+		else {
+			alert("Request was unsuccessful：" + xhr.status);
+		}
+	}
+};
+xhr.open("get", "http://www.somewhere-else.com/page/", true);
+xhr.send(null);
+与IE中的XDR对象不同，通过跨域XHR对象可以访问status和statusText属性，而且支持同步请求。跨域XHR对象也有一些限制，但为了安全这些限制
+是必需的：
+·不能使用setRequestHeader()设置自定义头部
+·不能发送和接收cookie
+·调用getAllResponseHeaders()方法总会返回空字符串
+由于无论同源请求还是跨源请求都使用相同的接口，因此对于本地资源，最好使用相对URL，在访问远程资源时再使用绝对URL。
 
+21.4.3 Preflighted Requests
+CORS通过一种叫做Prflighted Requests的透明服务器验证机制支持开发人员使用自定义的头部、GET或POST之外的方法，以及不同类型的主体内容。
 
+21.4.4 带凭据的请求
+默认情况下，跨源请求不提供凭据(cookie、HTTP认证及客户端SSL证明等)。通过将withCredentials属性设置为true，可以指定某个请求应该发送
+凭据
 
+21.4.5 跨浏览器的CORS
+综合以上兼容各浏览器的CORS代码：
+function createCORSRequest(method, url) {
+	var xhr = new XMLHttpRequest();
+	if ("withCredentials" in xhr) {
+		xhr.open(method, url, true);
+	}
+	else if (typeof XDomainRequest != "undefined") {
+		vxhr = new XDomainRequest();
+		xhr.open(method, url);
+	}
+	else {
+		xhr = null;
+	}
+	return xhr;
+}
+var request = createCORSRequest("get", "http://www.somewhere-else.com/page/");
+if (request) {
+	request.onload = function() {
+		//对request.responseText进行处理
+	};
+	request.send();
+}
+FireFox、Safari和Chrome中的XMLHttpRequest对象与IE中的XDomainRequest对象类似，都提供了够用的接口，因此以上模式还是相当有用的。这两个
+对象共同的属性/方法如下：
+·abort()：用于停止正在进行的请求
+·onerror：用于替代onreadystatechange检测错误
+·onload：用于替代onreadystatechange检测成功
+·responseText：用于取得响应内容
+·send()：用于发送请求
+以上成员都包含在createCORSrequest()函数返回的对象中，在所有浏览器中都能正常使用
+
+21.5 其他跨域技术
+利用DOM中能够执行跨域请求的功能，在不依赖XHR对象的情况下也能发送某种请求。
+
+21.5.1 图像Ping
+这种跨域请求技术是使用<img>标签，一个网页可以从任何网页中加载图像，不用担心跨域不跨域。可以动态创建图像，使用它们的onload和onerror
+事件处理程序来确定是否接收到了响应。
+动态创建图像经常用于图像Ping。图像Ping是与服务器进行简单、单向的跨域通信的一种方式。请求的数据是通过查询字符串形式发送的，而响应
+可以是任意内容，但通常是像素图或204响应。通过图像Ping，浏览器得不到任何具体的数据，但通过侦听load和error事件，它能知道响应是什么
+时候接收到的，例子：
+var img = new Image();
+img.onload = img.onerror = function() {
+	alert("Done!");
+}
+img.src = "http://www.example.com/text?name=Nicholas";
+以上创建了一个Image的实例，然后将onload和onerror事件处理程序指定为同一个函数。这样无论是什么响应，只要请求完成，就能得到通知。请求
+从设置src属性那一刻开始，而这个例子在请求中发送了一个name参数。
+图像Ping最常用于跟踪用户点击页面或动态广告曝光次数。图片Ping有两个主要的缺点，一是只能发送GET请求，二是无法访问服务器的响应文本。
+因此，图像Ping只能用于浏览器与服务器间的单向通信。
+
+21.5.2 JSONP
+JSONP是JSON with padding(填充式JSON或参数式JSON)的简写，是应用JSON的一种新方法。JSONP看起来与JSON差不多，只不过是被包含在函数调用
+中的JSON，例如：
+callback({"name":"Nicholas"});
+JSONP由两部分组成：回调函数和数据。回调函数是当响应来时应该在页面中调用的函数。回调函数的名字一般是在请求中指定的。而数据就是传入
+回调函数中的JSON数据，下面是一个典型的JSONP请求：
+http://freegeoip.net/json/?callback=handleResponse
+这个URL是在请求一个JSONP地理定位服务。通过查询字符串来指定JSONP服务的回调参数是很常见的，就像上面的URL所示，这里指定的回调函数的
+名字叫handleResponse()
+JSONP是通过动态<script>元素来使用的的，使用时可以为src属性指定一个跨域URL。<script>与<img>元素类似，都有能力不受限制地从其他域加载
+资源。因为JSONP是有效的JavaScript代码，所以在请求完成后，即在JSONP响应加载到页面中以后，就会立即执行。例子：
+function handleResponse(response) {
+	alert("You're at IP address "+ response.ip +", which is in "+ response.city +", "+ response.region_name +);
+}
+var script = document.createElement("script");
+script.src = "http://freegeoip.net/json/?callback=handleResponse";
+document.body.insertBefore(script, document.body.firstChild);
+与图像Ping相比，JSONP的优点在于能够直接访问响应文本，支持在浏览器与服务器之间双向通信。不过JSONP也有两点不足：
+首先，JSONP是从其他域中加载代码执行。如果其他域不安全，很可能会在响应中夹带一些恶意代码，而此时除了安全放弃JSONP调用外，没有办法
+追究。因此在使用不是自己运维的Web服务时，一定要保证它安全可靠
+其次，要确定JSONP请求是否失败并不容易。虽然HTML5给<script>元素新增了一个onerror事件处理程序，但目前还没有得到任何浏览器的支持。
+为此，不得不使用计时器检测指定时间内是否接收到了响应。
+
+21.5.3 Comet
+Comet指的是一种更高级的Ajax技术(也被叫做"服务器推送")，让服务器向页面推送数据。Comet能够让信息近乎实时地被推送到页面上，非常适合
+处理体育比赛的分数和股票报价
+有两种实现Comet的方法：长轮询和流。长轮询是传统轮询(也称短轮询)的一个翻版，短轮询是浏览器定时向服务器发送请求，看有没有更新的数据。
+长轮询是页面发起一个到服务器的请求，然后服务器一直保持连接打开，直到有数据可发送。发送完数据之后，浏览器关闭连接，随即又发起一个
+到服务器的新请求。这一过程在页面打开期间一直持续不断。
+两者最大的区别在于服务器如果发送数据。短轮询是服务器立即发送响应，无论数据是否有效，而长轮询是等待发送响应。轮询的优势是所有浏览器
+都支持。因为使用XHR对象和setTimeout()就能实现。而你要做的就是决定什么时候发送请求
+第二种流行的Comet实现是HTTP流。流不同于上述两种轮询，因为它在页面的整个生命周期内只使用一个HTTP连接。具体来说，就是浏览器向服务器
+发送一个请求，而服务器保持连接打开，然后周期性地向浏览器发送数据。除IE浏览器，通过侦听readystatechange事件及检测readyStatus的值是
+否为3，就可以利用XHR对象实现HTTP流。随着不断从服务器接收数据，readystate的值会周期性地变为3.当readyState值变为3时，responseText属性
+中就会保存接收到的所有数据。
+代码请查看原书
+
+21.5.4 服务器发送事件
+SSE(服务器发送事件)是围绕只读Comet交互推出的API或者模式。SSE API用于创建到服务器的单向连接，服务器通过这个连接可以发送任意数量的
+数据。服务器响应的MIME类型必须是text/event-stream，而且是浏览器中的JavaScript API能解析格式输出。SSE支持短轮询、长轮询和HTTP流，
+而且能在断开连接时自动确定何时重新连接。
+详情见原书
+
+21.5.5 Web Sockets
+Web Sockets的目标是在一个单独的持久连接上提供全双工、双向通信。在JavaScript中创建了Web Sockets之后，会有一个HTTP协议交换为Web Sockets
+协议。也就是说，使用标准的HTTP服务器无法实现Web Sockets，只有支持这种协议的专门服务器才能正常工作。
+由于Web Sockets使用了自定义的协议，所以URL模式也略有不同。未加密的连接不再是http://，而是ws://;加密的连接也不是https://，而是was://。
+在使用Web Sockets URL时，必须带着这个模式，因为将来还有可能支持其他模式。
+使用自定义协议而非HTTP协议的好处是，能够在客户端和服务器之间发送非常少量的数据，而不必担心HTTP那样字节级的开销。由于传递的数据包很小，
+因此Web Sockets非常适合移动应用。毕竟对移动应用而言，带宽和网络延迟都是关键问题。使用自定义协议的缺点在于，制定协议的时间比制定
+JavaScript API的时间还要长。
+兼容性：FireFox 6+、Safari 5+、Chrome和iOS 4+版Safari
+1.Web Sockets API
+要创建Web Sockets，先实例一个WebSocket对象并传入要连接的URL：
+var socket = new WebSocket("ws://www.example.com/server.php");
+注意：必须给WebSocket传入绝对URL。同源策略对Web Sockets不适用，因此可以通过它打开到任何站点的连接。至于是否会与某个域中的页面通信，
+则完全取决于服务器
+实例化了WebSocket对象后，浏览器会马上尝试创建连接。与XHR类似，WebSocket也有一个表示当前状态的readyState属性。值如下：
+·WebSocket.OPENING(0)：正在建立连接
+·WebSocket.OPEN(1)：已经建立连接
+·WebSocket.CLOSING(2)：正在关闭连接
+·WebSocket.CLOSE(3)：已经关闭连接
+WebSocket没有readystatechange事件；不过，它有其他事件，对应着不同的状态。readyState的值永远从0开始。
+要关闭Web Socket连接，可以在任何时候调用close()方法
+socket.close();
+调用了close()之后，readyState的值立即变为2(正在关闭)，而在关闭连接后就会变成3
+2.发送和接收数据
+Web Socket打开之后，就可以通过连接发送和接收数据。要向服务器发送数据，使用send()方法并传入任意字符串，例如：
+var socket = new WebSocket("ws://www.example.com/server.php");
+socket.send("Hello world!");
+因为Web Sockets只能通过连接发送纯文本数据，所以对于复杂的数据结构，在通过连接发送之前，必须进行序列化。以下是先将数据序列化为一个
+JSON字符串，然后再发送到服务器：
+var message = {
+	time: new Date(),
+	text: "Hello world",
+	clientId："asdfp8734rew"
+};
+socket.send(JSON.stringify(message));
+当服务器向客户端发来消息时，WebSocket对象就会触发message事件。这个message事件与其他传递消息的协议类型，也是把返回的数据保存在
+event.data属性中：
+socket.onmessage = function(event) {
+	var data = event.data;
+	//处理数据
+};
+event.data返回的数据是字符串，如果想得到其他格式的数据，必须手工解析这些数据
+
+3. 其他事件
+WebSocket对象还有其他三个事件，在连接生命的不同阶段触发：
+·open：在成功建立连接时触发
+·error：在发生错误时触发
+·close：在连接关闭时触发
+在这三个事件中，只有close事件的event对象有额外的信息。这个事件对象有三个额外的属性：wasClean、code和reason。其中，wasClean是一个
+布尔值，表示连接是否已经明确地关闭；code是服务器返回的数值状态码；而reason是一个字符串，包含服务器发回的信息。
+socket.onclose = function(event) {
+	console.log("Was clean?" + event.wasClean + "Code =" +event.code + "Reason=" +event.reason);
+};
+
+21.5.6 SSE与Web Sockets
+面对某个具体的用例，在考虑是使用SSE还是使用Web Sockets时，可以考虑以下几个因素：首先，是否有自由度建立和维护Web Sockets服务器？
+因为Web Socket协议不同于HTTP，所以现有服务器不能用于Web Socket通信。SSE倒是通过常规HTTP通信，因此现有服务器就可以满足需求。
+第二个要考虑的问题是到底需不需要双向通信。如果用例只需读取服务器数据，那么SSE比较容易实现。如果用例必须双向通信(如聊天室)，那么
+Web Sockets显然更好。当然，在不能使用Web Sockets的情况下，组合XHR和SSE也是能实现双向通信的。
+
+21.6 安全
+防止CSRF(跨站点请求伪造)攻击
+为确保通过XHR访问的URL安全，通行的做法就是验证发送请求者是否有权限访问相应的资源：
+·要求以SSL连接来访问可以通过XHR请求的资源
+·要求每一次请求都要附带经过相应算法计算得到的验证码
+下列措施对防范CSRF攻击不起作用：
+·要求发送POST而不是GET请求--很容易改变
+·检查来源URL以确定是否可信--来源记录很容易伪造
+·基于cookie信息进行验证--同样很容易伪造
 
 
 
