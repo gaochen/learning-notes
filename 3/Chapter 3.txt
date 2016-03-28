@@ -267,8 +267,173 @@ Array.prototype.sort接受一个函数当作参数，可以使其以不同的方式来实现排序：
 		return b-a;
 });
 
+3.2.2 函数作为返回值输出
+1.判断数据的类型
+利用object.prototype.toString来判读对象是什么类型：
+var isString = function(obj) {
+	return Object.prototype.toString.call(obj) == '[object string]';
+};
+var isArray = function(obj) {
+	return Object.prototype.toString.call(obj) === '[object String]';
+};
+var isNumber = function(obj) {
+	return Object.prototype.toString.call(obj) === '[object Number]';
+};
+包装成函数，避免多余代码：
+var isType = function(type) {
+	return function(obj) {
+		return Object.prototype.toString.call(obj) === '[object' + type + ']';
+	}
+};
+var isArray = isType('Array');
+var isString = isType('String');
+var isNumber = isType('number');
+console.log(isArray([1,2,3]));		// true
 
+还可以使用循环语句来批量注册isType函数；
+var Type = {}；
+for (var i=0, type; type=['string','Array','Number'][i++];) {
+	(function(type) {
+		Type['is'+type] = function(obj){
+			return Object.prototype.toString.call(obj) === '[object ' + type + ']';
+		}
+	})(type);
+};
 
+Type.isArray([]);			// true
+Type.isString("str");		// true
 
+2. getSingle
+下面是一个单例模式的例子，在第三章将更加深入的学习：
+var getSingle = function(fn) {
+	var ret;
+	return function() {
+		return ret || (ret = fn.apply(this, arguments));
+	};
+};
 
+var getScript = getScript(function() {
+	return document.createElement('script');
+});
 
+var script1 = getScript();
+var script2 = getScript();
+
+alert(script1 ===  script2);	// true
+
+3.2.3 高阶函数实现AOP
+AOP(面向切面编程)的主要作用是把一些跟核心业务逻辑模块无关的功能抽离出来，这些跟业务逻辑无关的功能通常包括日志
+统计、安全控制、异常处理等。把这些功能抽离出来之后，再通过“动态织入”的方式掺入业务逻辑模块中。这样做的好处首先
+是可以保持业务逻辑模块的纯净和高内聚性，其次是可以很方便地复用日志统计等功能模块。
+通常，在JavaScript中实现AOP，都是指把一个函数“动态织入”到另一个函数之中，具体的实现技术有很多，本节通过扩展
+Function.prototype来做到这一点，代码如下：
+Function.prototype.before = function(beforefn) {
+	var __self = this;		// 保存原函数的引用
+	return function() {		// 返回包含了原函数和新函数的"代理"函数
+		beforefn.apply(this, arguments);		// 执行新函数，修正this
+		return __self.apply(this, arguments);		// 执行原函数
+	}
+}；
+
+Function.prototype.after = function(afterfn) {
+	var __self = this;
+	return function() {
+		var ret = __self.apply(this, arguments);
+		afterfn.apple(this, arguments);
+		return ret;
+	}
+};
+
+var func = function() {
+	console.log(2);
+};
+
+func = func.before(function() {
+	console.log(1);
+}).after(function() {
+	console.log(3);
+});
+
+func();		// 1 2 3
+这种使用AOP的方式来给函数添加职责，也是JavaScript语言中一种非常特别和巧妙地装饰者模式实现，在实际开发中非常有用，
+将在15章详细讲解。
+
+3.2.4 高阶函数的其他应用
+1.currying
+首先讨论的是函数柯里化。currying又称部分求值。一个currying的函数首先会接受一些参数，接受了这些参数之后，该函数
+并不会立即求值，而是继续返回另外一个函数，刚才传入的参数在函数形成的闭包中被保存起来。待到函数被真正需要求值的
+时候，之前传入的所有参数都会被一次性用于求值。
+假设我们要编写一个计算每月开销的函数，在每天结束之前，我们都要记录今天花掉了多少钱，代码如下：
+var monthlyCost = 0;
+
+var cost = function(money) {
+	monthlyCost += money;
+};
+
+cost(100);		// 第1天开销
+cost(200);		// 第2天开销
+cost(300);		// 第3天开销
+//cost(700);		// 第30天开销
+
+alert(monthlyCost);		// 600
+通过这段代码可知，每天结束后都会记录今天花掉了多少钱，但是我们只需要计算到月底这个月总共花了多少钱，也就是说只
+需要在月底计算一次。
+如果在每个月的前29天，我们都只是保存好当天的开销，直到第30天才进行求值计算，这样就达到了我们的要求。下面的cost
+函数还不是currying函数的完整实现，但有助于了解其思想：
+var cost = (function() {
+	var args = [];
+	
+	return function() {
+		if (arguments.length === 0) {
+			var money = 0;
+			for (var i=0, l=args.length; i<l; i++) {
+				money += args[i];
+			}
+			return money;
+		}
+		else {
+			[].push.apply(args, arguments);
+		}
+	}
+})();
+
+cost(100);		// 未求值
+cost(200);		// 未求值
+cost(300);		// 未求值
+
+console.log(cost());		// 求值并输出 600
+
+接下来编写一个通用的function currying(){}，function currying(){}接受一个参数，即将要被curring的函数。在这个例子
+中，这个函数的作用遍历本月每天的开销并求出它们的总和，代码如下：
+var currying = function(fn) {
+	var args = [];
+	
+	return function() {
+		if (arguments.length === 0) {
+			return fn.apply(this, args);
+		}
+		else {
+			[].push.apply(args, arguments);
+			return arguments.callee;
+		}
+	}
+};
+
+var cost = (function() {
+	var money = 0;
+	
+	return function(){
+		for (var i=0, l=arguments.length; i<l; i++) {
+			money += arguments[i];
+		}
+		return money;
+	}
+})();
+
+var cost = currying(cost);		// 转化成currying函数
+
+cost(100);		//未求值
+cost(200);		//未求值
+cost(300);		//未求值
+
+alert(cost());		// 求值并输出：600
