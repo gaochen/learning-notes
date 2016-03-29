@@ -129,3 +129,134 @@ event对象包含与创建它的特点事件有关的属性和方法。触发的
 如果直接将事件处理程序给定了目标元素，则this、currentTarget和target包含相同的值。
 
 13.3.2 IE中的事件对象
+与访问DOM中的event对象不同，要访问IE中的event对象有几种不同的方式，取决于指定事件处理程序的方法。在使用DOM0级方法添加事件处理程序
+时，event对象作为window对象的一个属性存在。例子：
+var btn = document.getElmentById("myBtn");
+btn.onclick = function() {
+	var event = window.event;
+	alert(event.type);		// "click"
+};
+如果事件处理程序是使用attachEvent()添加的，那么就有一个event对象作为参数被传入事件处理程序函数中，代码如下：
+var btn = document.getElmentById("myBtn");
+btn.attachEvent("onclick", function(event) {
+	alert(event.type);		// "click"
+});
+在使用attachEvent()的情况下，也可以通过window对象来访问event对象。
+如果是在HTML特性指定的事件处理程序，也会通过event变量来访问event对象，和DOM中的事件模型相同。
+IE的event对象都会包含以下所列的属性和方法：
+·cancelBubble属性，Boolean类型，读/写，默认值为false，但将其设置为true就可以取消事件冒泡(与DOM中的stopPropagation()方法的作用相同)
+·returnValue属性，Boolean类型，读/写，默认值为true，但将其设置为false就可以取消事件的默认行为(与DOM中的preventDefault()相同)
+·srcElement属性，Element类型，只读，事件的目标(与DOM中的target属性相同)
+·type属性，String类型，只读，被触发的事件的类型
+
+13.3 跨浏览器的事件对象
+增强EventUtil对象
+var EventUtil = {
+	addHandler: function(element, type, handler) {
+		if (element.addEventListener) {
+			element.addEventListener(type, handler, false);
+		}
+		else if (element.attachEvent) {
+			element.attachEvent("on" + type, handler);
+		}
+		else {
+			//DOM0级方法
+			element["on" + type] = handler;
+		}
+	},
+	
+	getEvent: function(event) {
+	 return event ? event : window.event;
+	},
+	
+	getTarget: function(event) {
+		return event.target || event.srcElement;
+	},
+	
+	preventDefault: function(event) {
+		if (event.preventDefault) {
+			event.preventDefault();
+		}
+		else {
+			event.returnValue = false;
+		}
+	},
+	
+	removeHandler: function(element, type, handler) {
+		if (element.removeEventListener) {
+			element.removeEventListener(type, handler, false);
+		}
+		else if (element.detachEvent) {
+			element.detachEvent("on" + type, handler);
+		}
+		else {
+			//DOM0级方法
+			element["on" + type] = null;
+		}
+	}
+	
+	stopPropagation: function() {
+		if (event.stopPropagation) {
+			event.stopPropagation();
+		}
+		else {
+			event.cancelBubble = true;
+		}
+	}
+}
+
+13.4 事件类型
+“DOM3级事件”规定了以下几类事件：
+·UI事件，当用户与页面上的元素交互时触发；
+·焦点事件，当元素获取或失去焦点时触发；
+·鼠标事件，当用户通过鼠标在页面上执行操作时触发；
+·滚轮事件，当使用鼠标滚轮(或类似设备)时触发；
+·文本事件，当在文档中输入文本时触发；
+·键盘事件，当用户通过键盘在页面上执行操作时触发；
+·合成事件，当为IME输入字符时触发；
+·变动事件，当底层DOM结构发生变化时触发；
+·变动名称事件，当元素或属性名变动时触发。此类事件已经被废弃，没有任何浏览器实现它们，不作介绍
+
+13.4.1 UI事件
+·DOMActivate：表示元素已经被用户操作(通过鼠标或键盘)激活。有兼容性问题，不建议使用。
+·load：当页面完全加载后在window上面触发，当所有框架都加载完毕时在框架集上触发，当图像加载完毕时在<img>元素上触发，或者当嵌入的内容
+加载完毕时在<object>元素上面触发。
+·unload：当页面完全卸载后在window上面触发，当所有框架都卸载后在框架集上面触发，或者当嵌入的内容卸载完毕后在<object>元素上面触发。
+·abort：在用户停止下载过程中，如果嵌入的内容没有加载完，则在<object>元素上面触发。
+·error：当发生JavaScript错误时在window上面触发，当无法加载图像时在<img>元素上面触发，当无法加载嵌入内容时在<object>元素上面触发，
+或者当有一或多个框架无法加载时在框架集上面触发。
+·select：当用户选择文本框(<input>或<textarea>)中的一或多个字符时触发。
+·resize：当窗口或框架的大小变化时在window或框架上面触发。
+·scroll：当用户滚动带滚动条的元素中的内容时，在该元素上面触发。<body>元素中包含所加载页面的滚动条
+多数这些事件都与window对象或表单控件相关。
+除了DOMActivate之外，其他事件在DOM2级事件中都归为HTML事件。要确定浏览器是否支持DOM2级事件规定的HTML事件，可以使用如下代码：
+var isSupported = document.implementation.hasFeature("UIEvent", "3.0");
+
+1.load事件
+JavaScript中最常用的一个事件就是load。当页面完全加载后(包括所有图像、JavaScript文件、CSS文件等外部资源)，就会触发window上面的load
+事件。有两种定义onload事件处理程序的方式。
+第一种通过JavaScript来指定事件处理程序：
+EventUtil.addHandler(window, "load", function(event) {
+	alert("Loaded!");
+});
+第二种是为<body>元素添加一个onload特性
+<body onload="alert('Loaded!')">
+
+图像也可以触发load事件：
+EventUtil.addHandler(window, "load", function() {
+	var image = document.createElement("img");
+	//先指定事件
+	EventUtil.addHandler(image, "load", function(event) {
+		event = EventUtil.getEvent(event);
+		alert(EventUtil.getTarget(event).src);
+	});		
+	document.body.appendChild(image);
+	//后设置属性
+	image.src = "smile.gif";
+});
+注意：onload事件处理程序要写在指定src属性之前，因为新图像元素不一定要从添加到文档后才开始下载，只要设置了src属性就会开始下载。
+同样的功能也可以通过Image对象实现，但是无法加到DOM树中。
+
+还有一些元素也也非标准的方式支持load事件，IE9+及其他主流浏览器支持<script>元素触发load事件。与图像不同，只有在设置了<script>元素
+的src属性并将该元素添加到文档后，才会开始下载JavaScript文件。换句话说，对于<script>元素而言，指定src属性和指定事件处理程序的先后
+顺序就不重要了。
