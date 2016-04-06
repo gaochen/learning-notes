@@ -337,3 +337,92 @@ var isSupported = document.implementation.hasFeature("MouseEvent", "3.0");
 鼠标事件中还有一类滚轮事件。其实是一个mousewheel事件。
 兼容性：Firefox下为DOMMouseScroll事件，其他浏览器为mousewheel
 
+1.客户区坐标位置
+鼠标事件都是在浏览器视口中的特定位置上发生的。这个位置信息保存在事件对象的clientX和clientY属性中。所有浏览器都支持者两个属性，它们的
+值表示事件发生时鼠标指针在视口中的水平和垂直坐标。
+//获取鼠标事件的客户端坐标信息
+var div = document.getElmentById("myDiv");
+EventUtil.addHandler(div, "click", function(event) {
+	event = EventUtil.getEvent(event);
+	alert("Client coordinate：" + event.clientX + "," + event.clientY);
+});
+
+2.页面坐标位置
+通过客户区坐标能够知道鼠标是在视口中什么位置发生的，而页面坐标通过事件对象的pageX和pageY属性，能够知道事件是在页面中的什么位置发生
+的，即坐标是从页面本身而非视口的左边和右边
+在页面没有滚动的情况下，pageX和pageY的值与clientX和clientY的值相等
+在IE8及更早版本，不支持pageX和pageY事件，可以通过event.clientX + document.body.scrollLeft来计算得出页面坐标
+
+3.屏幕坐标位置
+通过screenX和screenY属性可以确定鼠标事件发生时鼠标指针相对于整个屏幕的坐标信息。  
+
+4.修改键
+虽然鼠标事件主要是使用鼠标来触发的，但在按下鼠标时键盘上的某些键的状态也可以影响到所要采取的操作。这些修改键就是Shift、Ctrl、Alt和
+Meta(Windows键或Cmd键)。它们经常被用来修改鼠标事件的行为。DOM为此规定了4个属性，表示这些修改键的状态：shiftKey、ctrlKey、altKey、
+metaKey。这些属性包含的都是布尔值，如果相应的键被按下了，则值为true，否则为false
+
+5.相关元素
+在发生mouseover和mouseout事件时，还会涉及更多的元素。这两个时间都会涉及把鼠标指针从一个元素的边界之内移动到另一个元素的边界之内。
+对mouseover事件而言，事件的主目标是获得光标的元素，而相关元素就是那个失去光标的元素。而对mouseout事件而言，事件的主目标是失去光标
+的元素，而相关元素则是获得光标的元素。
+DOM通过event对象的relatedTarget属性提供了相关元素的信息。只有mouseover和mouseout有这个属性。IE8及之前版本不支持该属性，在mouseover
+事件触发时，提供了fromElement属性保存相关元素；在mouseout事件触发时，toElement属性保存了相关元素。
+var EventUtil = {
+	getRelatedTarget: function() {
+		if (event.relatedTarget) {
+			return event.relatedTarget;
+		}
+		else if (event.toElement) {
+			return event.toElement;
+		}
+		else if (event.fromElement) {
+			return event.fromElement;
+		}
+	}
+}
+
+6.鼠标按钮
+对于mousedown和mouseup事件来说，在其event对象存在一个button属性，表示按下或释放的按钮。button属性可能有3个值：0表示主鼠标按钮，1表
+示中间的鼠标按钮(滚轮)，2表示次鼠标按钮。IE8及更早版本的button属性会有很大差异。
+
+7.更多的事件对象
+"DOM2级事件"规范在event对象中还提供了detail属性，用于给出有关事件的更多信息。
+
+8.鼠标滚轮事件
+mousewheel事件，包含一个特殊对wheelDelta属性。当向前滚动鼠标滑轮时，wheelDelta是120的倍数；向后滚动时，wheelDoelta是-120的倍数。
+Firefox支持一个名为DOMMouseScroll的类似事件，是在鼠标滚动的时候触发，滚动信息保存在detail属性中。当向前滚动时，detail属性为-3的
+倍数；当向后滚动时，detail属性为3的倍数。
+兼容代码：
+var EventUtil = {
+	getWheelDelta: function() {
+		if (event.wheelDelta) {
+			return (client.engine.opera && client.engine.opera < 9.5 ? -event.wheelDelta : event.wheelDelta);
+		}
+		else {
+			return -event.detail * 40;
+		}
+	},
+	//省略了其他代码
+}
+
+9.触摸设备
+iPhone和iPad的Safari开发注意事项：
+·不支持dblclick事件。双击浏览器窗口会放大画面，而且没有办法改变该行为
+·轻击可单击元素会触发mousemove事件
+·mousemove事件也会触发mouseover和mouseout事件
+·两个手指放在屏幕上且页面随手指移动而滚动时会触发mousewheel和scroll事件
+
+10.无障碍性问题
+
+13.4.4 键盘与文本事件
+
+
+
+
+
+
+
+
+
+
+
