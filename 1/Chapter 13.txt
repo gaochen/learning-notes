@@ -415,6 +415,59 @@ iPhone和iPad的Safari开发注意事项：
 10.无障碍性问题
 
 13.4.4 键盘与文本事件
+用户在使用键盘时会触发键盘事件。
+有3个键盘事件：
+·keydown：当用户按下键盘上的任意键时触发，如果按住不放，会重复触发此事件
+·keypress：当用户按下键盘上的任意字符键时触发，如果按住不放，会重复触发此事件
+·keyup：当用户释放键盘上的键时触发
+虽然所有元素都支持以上3个事件，但只有在用户通过文本框输入文本时才最常用到
+keydown和keypress是在文本框发生改变之前触发，keyup是在文本框发生改变之后触发
+
+1.键码
+在发生keydown和keyup事件时，event对象的keyCode属性中会包含一个代码，与键盘上一个特定的键对应。keyCode属性的值与ASCII码中对应小写
+字母或数字的编码相同
+
+2.字符编码
+IE9、FireFox、Chrome、Safari的event对象都支持一个charCode属性，只有在keypress事件中才有值，等于keyCode的值。IE8及更早版本和Opera
+不支持该属性，需要使用keyCode替代
+
+3.DOM3变化
+新增属性：key、keyIdentifier、char、location，但是都有兼容性问题，不推荐使用
+
+4. textInput事件
+当用户在可编辑区域中输入字符时，就会触发textInput事件。由于该事件主要考虑的是字符，因此它的event对象中还包含一个data属性，这个属性
+的值就是用户输入的字符(不是字符编码)。
+兼容性:IE9+、Safari、Chrome
+
+13.4.6变动事件
+DOM2级的变动事件能在DOM中的某一部分发生变化时给出提示。
+1.删除节点：
+在使用removeChild()和replaceChild()从DOM中删除节点时，首先会触发DOMNodeRemoved事件。
+2.插入节点：
+在使用appendChild()、replaceChild()或insertBefore()向DOM中插入节点时，首先会触发DOMNodeInserted事件。
+兼容性：IE9+及其他主流浏览器
+
+13.4.7 HTML5事件
+1.contextmenu事件
+contextmenu事件用以表示何时应该显示上下文菜单，以便开发人员取消默认的上下文菜单而提供自定义菜单
+
+2.beforeunload事件
+beforeunload事件是为了让开发人员有可能在页面卸载前阻止这一操作
+
+3.DOMContentLoaded事件
+DOMContentLoaded事件在形成完整的DOM树之后就会触发，不会等其他资源是否加载完成
+
+4.readystatechange事件
+这个事件的目的是提供与文档或元素的加载状态有关的信息。兼容性不好
+
+5.pageshow和pagehide事件
+pageshow事件在页面显示时触发。在重新加载的页面中，pageshow会在load事件触发后出发
+pagehide事件是在浏览器卸载页面的时候触发，而且是在unload事件之前触发
+兼容性：IE9+及其他主流浏览器
+
+6.hashchange事件
+HTML5新增了hashchange事件，以便在URL的参数列表(及URL中"#"号后面的所有字符串)发生变化时通知开发人员。必须要把hashchange事件处理程序
+添加给window对象，然后URL参数列表只要变化就会调用它
 
 
 
