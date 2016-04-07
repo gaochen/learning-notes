@@ -437,3 +437,5 @@ cost(200);		//未求值
 cost(300);		//未求值
 
 alert(cost());		// 求值并输出：600
+
+2.uncurrying
