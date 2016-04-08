@@ -469,9 +469,111 @@ pagehide事件是在浏览器卸载页面的时候触发，而且是在unload事
 HTML5新增了hashchange事件，以便在URL的参数列表(及URL中"#"号后面的所有字符串)发生变化时通知开发人员。必须要把hashchange事件处理程序
 添加给window对象，然后URL参数列表只要变化就会调用它
 
+13.4.8 设备事件
+1.orientationchange事件
+苹果为移动Safari中添加了orientationchange事件，以便开发人员能够确定用户何时将设备由横向查看模式切换为纵向查看模式。移动Safari的
+window.orientation属性中可能包含3个值：
+0表示肖像模式
+90表示向左旋转的横向模式
+-90表示向右旋转的横向模式
 
+2.MozOrientation事件
+实验性API
 
+3.deviceorientation事件
+在设备的加速指针检测到设备方向变化时在window对象上触发。deviceorientation事件的意图是告诉开发人员设备在空间中朝向哪儿，而不是如何移动
 
+4.devicemotion事件
+这个事件告诉开发人员设备什么时候移动，而不仅仅是设备方法如何改变
+
+13.4.9 触摸与手势事件
+1.触摸事件
+触摸事件会在用户手指放在屏幕上面时、在屏幕上滑动时或从屏幕上移开时触发。具体来说，有以下几个触摸事件：
+·touchstart：当手指触摸屏幕时触发；即使已经有一个手指放在了屏幕上也会触发
+·touchmove：当手指在屏幕上滑动时连续地触发。这个事件发生期间，调用preventDefault()可以阻止滚动
+·touchend：当手指从屏幕上移开时触发
+·touchcancel：当系统停止跟踪触摸时触发。关于此事件的确切触发时间，文档中没有明确说明
+上面几个事件都会冒泡，也都可以取消。每个触摸事件的event对象都提供了在鼠标事件中常见的属性：bubbles、cancelable、view、clientX、
+clientY、screenX、screenY、detail、altKey、shiftKey、ctrlKey和metaKey
+
+除了常见的DOM属性外，触摸事件还包含下列三个用于跟踪触摸的属性。
+·touches：表示当前跟踪的触摸操作的Touch对象的数组
+·targetTouches：特定于事件目标的Touch对象的数组
+·changeTouches：表示自上次触摸以来发生了什么改变的Touch对象的数组
+
+每个Touch对象包含下列属性：
+·clientX：触摸目标在视口中的x坐标
+·clientY：触摸目标在视口中的y坐标
+·identifier：标识触摸的唯一ID
+·pageX：触摸目标在页面中的x坐标
+·pageY：触摸目标在页面中的y坐标
+·screenX：触摸目标在屏幕中的x坐标
+·screenY：触摸目标在屏幕中的y坐标
+·target：触摸的DOM节点目标
+
+touchstart时，使用touches获取touch对象
+touchend时，使用changeTouches获取touch对象
+
+在触摸屏幕上的元素时，所有事件(包括鼠标事件)发生的顺序：
+(1)touchstart
+(2)mouseover
+(3)mousemove
+(4)mousedown
+(5)mouseup
+(6)click
+(7)touchend
+
+2.手势事件
+ios2.0中的Safari还引入了一租手势事件。当两个手指触摸屏幕时就会产生手势，手势通常会改变显示项的大小，或者选择显示项。有三个手势事件：
+·gesturestart：当一个手指已经按在屏幕上而另一个手指又触摸屏幕时触发
+·gesturechange：当触摸屏幕的任何一个手指的位置发生变化时触发
+·gestureend：当任何一个手指从屏幕上移开时触发
+只有两个手指都触摸到事件的接受容器时才会触发这些事件。
+与触摸事件一样，每个手势事件的event对象都包含着标准的鼠标事件属性，此外，还包含两个额外的属性：rotation和scale。
+rotation属性表示手指变化引起的选择角度，负值表示逆时针旋转，正值表示顺时针旋转(该值从0开始)
+scale属性表示两个手指间距离的变化情况；这个值从1开始，并随距离拉大而增大，随距离减短而减小
+
+13.5 内存和性能
+添加到页面上的事件处理程序数量将直接关系到页面的整体运行性能。原因多方面的，首先，每个函数都是对象，都会占用内存；内存中的对象越多，
+性能就越差。其实，必须事先指定所有事件处理程序而导致的DOM访问次数，会延迟整个页面的交互就绪时间。
+
+13.5.1 事件委托
+对"事件处理程序过多"问题的解决方案就是事件委托。事件委托利用了事件冒泡，只指定一个事件处理程序，就可以管理某一类型的所有事件。
+
+13.5.2 移除事件处理程序
+内存中留有那些过时不用的"空事件处理程序"，也是造成Web应用程序内存与性能问题的主要原因。造成因素有2种。
+第一种情况是从文档中移除了带有事件处理程序的元素时，原来添加到元素中的事件处理程序极有可能无法被当作垃圾回收
+第二种就是卸载页面的时候。
+
+13.6 模拟事件
+可以使用JavaScript在任意时刻来触发特定的事件，而此时的事件就如同浏览器创建的事件一样。
+
+13.6.1 DOM中的事件模拟
+可以在document对象上使用createEvent()方法创建event对象。这个方法接收一个参数，即表示要创建的事件类型的字符串。在DOM2级中，所有字符串
+都使用英文复数形式，可以是下列几个字符串之一：
+·UIEvents：一般化的UI事件。鼠标事件和键盘事件都继承自UI事件
+·MouseEvents：一般化的鼠标事件
+·MutationEvents：一般化的DOM变动事件
+·HTMLEvents：一般化的HTML事件
+模拟事件的最后一步就是触发事件。这一步需要dispatchEvent()方法，所有支持事件的DOM节点都支持这个方法。调用dispatchEvent()方法时，需要
+传入一个参数，即表示要触发事件的event对象。
+
+1.模拟鼠标事件
+创建鼠标事件对象的方法是为createEvent()传入字符串"MouseEvents"。返回的对象有一个名为initMouseEvent()方法，用于指定与该鼠标事件有关
+的信息。
+var btn = document.getElmentById("myBtn");
+//创建事件对象
+var event = document.createEvent("MouseEvents");
+//初始化事件对象
+event.initMouseEvent("click", true, true, document.defaultView,0,0,0,0,0,false,false,false,false,0,null);
+//触发事件
+btn.dispatchEvent(event);
+
+2.模拟键盘事件
+DOM3级规定，调用createEvent()并传入"keyboardEvent"就可以创建一个键盘事件。返回的事件对象会包含一个initKeyEvent()方法。
+
+13.6.2 IE中的事件模拟
+调用document.createEventObject()方法可以在IE中创建event对象。但是需要手动为这个对象添加所有必要的信息。最后用fireEvent()方法调用。
 
 
 
