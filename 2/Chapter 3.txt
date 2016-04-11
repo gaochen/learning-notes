@@ -141,9 +141,46 @@ PUT方法会向服务器写入文档
 3.3.5 POST
 POST方法起初是用来向服务器输入数据的。实际上，通常会用它来支持HTML的表单。
 
-3.4 状态码 62
+3.4 状态码 
+3.4.1 100~199 信息性状态码
+状态码100，原因短句是Continue，它的目的是对这样的情况进行优化：HTTP客户端应用程序
+有一个实体的主体部分要发送给服务器，但希望在发送之前查看一下服务器是否会接受这个实体。
+状态码101，原因短句是Switching Protocols，说明服务器正在根据客户端的指定，将协议
+切换成Update首部所列的协议
 
+3.4.2 200~299 成功状态码
 
+3.4.3 300~399 重定向状态码
+
+3.4.4 400~499 客户端错误状态码
+400：Bad Request，用于告知客户端它发送了一个错误的请求
+401：Unauthorized，请求客户端在获取对资源的访问权之前，对自己进行认证。
+402：Payment Required，现在这个状态码还未使用，但已经被保留，以作未来之用
+403：Forbidden，用于说明请求被服务器拒绝了
+404：Not Found，用于说明服务器无法找到所请求的URL
+405：Method Not Allowed，发送的请求中带有所有请求的URL不支持的方法
+406：Not Acceptable，客户端可以指定参数来说明它们愿意接收什么类型的实体
+407：Proxy Authentication Required，与401类型，但用于要求对资源进行认证的代理服务器
+408：Request Timeout，客户端请求的时间太长
+409：Conflict，用于说明请求可能在资源上引发的一些冲突
+410：Gone，与40类似，只是服务器曾经拥有过次资源
+411：Length Required，服务器要求在请求报文中包含Content-Length首部时使用
+412：Precondition Failed，客户端发起了条件请求，且其中一个条件失败了的时候使用
+413：Request Entity Too Large，客户端发送的实体主体部分比服务器能够或希望处理的要大
+414：Request URL Too Long，客户端发送给请求的URL比服务器能够或希望处理的要长
+415：Unsupported Media Type，服务器无法理解或无法支持客户端所发实体的内容类型
+416：Requested Range Not Satisfiable，请求报文所请求的资源范围无法被满足
+417：Expectation Failed，请求的Expect首部包含了一个服务器无法满足的期望
+
+3.3.5 500~599 服务器错误状态码
+500：Internal Sever Error，服务器遇到一个妨碍它为请求提供服务的错误
+501：Not Implement，客户端发起的请求超出服务器的能力范围
+502：Bad Gateway，作为代理或网关使用的服务器从请求响应链的吓一跳链路上收到一条伪响应
+503：Service Unavailable，用来说明服务器现在无法为请求提供服务
+504：Gateway Timeout，响应超时
+505：HTTP Version Not Supported，服务器收到无法或不愿支持的协议版本
+
+3.5 首部
 
 
 
