@@ -1,0 +1,149 @@
+第20章 JSON
+
+本章内容
+·理解JSON语法
+·解析JSON
+·序列化JSON
+
+JSON:JavaScript Object Notation，JavaScript对象表示法
+
+20.1 语法
+JSON的语法可以表示以下三种类型的值：
+·简单值：使用与JavaScript相同的语法，可以在JSON中表示字符串、数值、布尔值和null。但JSON不支持JavaScript中的特殊值undefined
+·对象：对象作为一种复杂数据类型，表示的是一组无序的键值对儿。而每个键值对儿中的值可以是简单值，也可以是复杂数据类型的值
+·数组：数组也是一中复杂数据类型，表示一组有序的值得列表，可以通过数值索引来访问其中的值。数组的值也可以是任意类型--简单值、对象或数组
+JSON不支持变量、函数或对象实例，它就是一种表示结构数据的格式，虽然与JavaScript中表示数据的某些语法相同，但它并不局限于JavaScript的
+范畴。
+
+20.1.1 简单值
+最简单的JSON数据形式就是简单值。例如：
+5
+"Hello World!"
+
+20.1.2 对象
+JSON中的对象与JavaScript字面量有两个地方不一样。首先，没有声明变量。其次，没有末尾的分号。最重要的一点是对象的属性必须加双引号。
+{
+	"name": "Nicholas",
+	"age": 29
+}
+
+20.1.3 数组 
+格式如下：
+[{...},{...}]
+
+20.2 解析与序列化
+JSON的优势就在于可以很方便的把JSON数据结构解析为有用的JavaScript对象。
+
+20.2.1 JSON对象
+早期的JSON解析器基本上就是使用JavaScript的eval()函数。ECMAScript5对解析JSON的行为进行规范，定义了全局对象JSON。支持这个对象的浏览器
+有IE8+及其他主流浏览器，对于较早的浏览器，可以使用一个shim:https://github.com/douglascrockford/JSON-js。在旧版本的浏览器中，使用
+eval()对JSON数据结构求值存在风险，因为可能会执行一些恶意代码。
+JSON对象有两个方法：Stringify()和parse()。在简单情况下，这个两个方法分别用于把JavaScript对象序列化为JSON字符串和把JSON字符串解析为
+原生JavaScript值，例如：
+var book = {
+	title : "Professional JavaScript",
+	authors : [
+		"Nicholas C. Zkas"
+	],
+	edition: 3,
+	year: 2001
+};
+var jsonText = JSON.stringify(book);
+这个例子使用JSON.stringify()把一个JavaScript对象序列化为一个JSON字符串，然后将它保存在变量jsonText中，默认情况下，JSON.stringify()
+输出的JSON字符串不包含任何空格字符或缩进，因此保存在jsonText中的字符串如下所示：
+{"title":"Professional JavaScript","authors":["Nicholas C. Zakas"],"edition":3,"year":2011}
+
+在序列化JavaScript对象时，所有函数及原型成员都会被有意忽略，不体现在结果中。此外，值为undefined的任何属性也都会被跳过。
+将JSON字符串直接传递给JSON.parse()就可以得到相应的JavaScript值。例如：
+var bookCopy = JSON.parse(jsonText);
+
+20.2.2 序列化选项
+实际上，JSON.stringify()除了要序列化的JavaScript对象外，还可以接收另外两个参数，这个两个参数用于指定以不同的方式序列化JavaScript对象。
+第一个参数是个过滤器，可以是一个数组，也可以使一个函数；第二个参数是一个选项，表示是否在JSON字符串中保留缩进。单独或组合使用这两个
+参数，可以更全面深入地控制JSON的序列化。
+1.过滤结果
+如果过滤器参数是数组，那么JSON.stringify()的结果中将只包含数组中列出的属性。例如：
+var book = {
+	"title": "Professional JavaScript",
+	"authors": [
+		"Nicholas C. Zakas"
+	],
+	edition: 3,
+	year: 2011
+};
+var jsonText = JSON.stringify(book, ["title", "edition"]);
+返回的结果只包含title和edition属性：
+{"title":"Professional JavaScript","edition":3}
+
+如果第二个参数是函数，传入的函数接收两个参数，属性(键)名和属性值。根据属性(键)名可以指到应该如何处理要序列化的对象中的属性。属性名
+只能是字符串，而在值并非键值对儿结构的值时，键名可以是空字符串。
+为了改变序列化对象的结果，函数返回的值就是相应键的值。要注意，如果函数返回了undefined，那么相应的属性会被忽略，例如：
+var book = {
+	"title": "Professional JavaScript",
+	"authors": [
+		"Nicholas C. Zakas" 
+	],
+	edition: 3,
+	year: 2011
+};
+var jsonText = JSON.stringify(book, function(key, value) {
+	switch(key) {
+		case "authors" :
+			return value.join(",");
+		case "year" :
+			return 5000;
+		case "edition" :
+			return undefined;
+		default :
+			return value;
+	}
+});
+返回的结果：{"title":"Professional JavaScript","authors":"Nicholas C. Zakas","year":5000}
+
+2.字符串缩进
+JSON.stringify()方法的第三个参数用于控制结果中的缩进和空白符。如果这个参数是一个数值，那么它表示的是每个级别缩进的空格数。例如，要在
+每个级别缩进4个空格:
+var book = {
+	"title": "Professional JavaScript",
+	"authors": [
+		"Nicholas C. Zakas" 
+	],
+	edition: 3,
+	year: 2011
+};
+var jsonText = JSON.stringify(book, null, 4);
+返回结果：
+{
+	"title": "Professional JavaScript",
+	"authors": [
+		"Nicholas C. Zakas" 
+	],
+	edition: 3,
+	year: 2011
+}
+
+3.toJSON()方法
+当JSON.stringify()还不能满足对某些对象进行自定义序列化的需求，就可以给对象定义toJSON()方法，返回其自身的JSON数据格式。
+
+20.2.3 解析选项
+JSON.parse()方法也可以接收另一个参数，该参数是一个函数，将在每个键值对儿上调用。这个函数被称为还原函数(reviver)，如果还原函数返回
+undefined，则表示要从结果中删除相应的键，例如：
+var book = {
+	"title": "Professional JavaScript",
+	"authors": [
+		"Nicholas C. Zakas" 
+	],
+	edition: 3,
+	year: 2011,
+	releaseDate: new Date(2011, 11, 1)
+};
+var jsonText = JSON.stringify(book);
+
+var bookCopy = JSON.parse(jsonText, function(key, value){
+	if (key == "releaseDate") {
+		return new Date(value);
+	}
+	else {
+		return value;
+	}
+});
