@@ -46,3 +46,117 @@ function isSortable(object) {
 可以通过JavaScript的navigator.userAgent属性访问。
 
 9.3.2 用户代理字符串检测技术
+一般情况下，知道呈现引擎和最低限度的版本就足以决定正确的操作方法了。
+1.识别呈现引擎
+确切知道浏览器的名字和版本号不如确切知道它使用的是什么呈现引擎。只要浏览器使用的引擎是一样的，那么它们一定支持相同的特性。因此，要
+编写的脚本将主要检测五大呈现引擎：IE、Gecko、WebKit、KHTML和Opera。
+检测脚本的基本代码结果如下：
+var client = function() {
+	var engine = {
+		//呈现引擎
+		ie: 0,
+		gecko: 0,
+		webkit: 0,
+		khtml: 0,
+		opera: 0,
+		
+		//具体版本号
+		ver: null
+	};
+	
+	return {
+		engine: engine
+	};
+}();
+client全局变量用于保存相关信息。匿名函数内部的局部变量engine是一个包含默认设置的对象字面量。在这个对象字面量中，每个呈现引擎都对应
+着一个属性，属性的值默认为0。如果检测到了哪个呈现引擎，那么就以浮点数值形式将该引擎的版本号写入相应的属性。而呈现引擎的完整版本(是
+一个字符串)，则被写入ver属性。
+要正确地识别呈现引擎，关键是检测顺序要正确。由于用户代理字符串存在诸多不一致的地方，如果检测顺序不对，很可能会导致检测结果不正确。
+为此，第一步就是识别Opera，因为它的用户代理字符串有可能完全模仿其他 浏览器。要识别Opera，必须得检测window.opera对象，代码如下：
+if (window.opera) {
+	engine.ver = window.opera.version();
+	engine.opera = parseFloat(engine.ver);
+}
+
+放在第二位检测的呈现引擎是WebKit。因为WebKit的用户代理字符串中包含"GecKo"和"KHTML"这两个字符串。不过WebKit的用户代理字符串中的
+"AppleWebKit"是独一无二的，因此检测这个字符串最合适，代码如下：
+var ua = navigator.userAgent;
+if (window.opera) {
+	engine.ver = window.opera.version();
+	engine.opera = parseFloat(engine.ver);
+}
+else if (/AppleWebKit\/(\S+)/.test(ua)) {
+	engine.ver = RegExp["$1"];
+	engine.webkit = parseFloat(engine.ver);
+}
+
+接下来要测试的呈现引擎是KHTML。注意，在Konqueror 3.1及更早版本中不包含KHTML的版本，故而就要使用Konqueror的版本来代替。在代码如下：
+var ua = navigator.userAgent;
+if (window.opera) {
+	engine.ver = window.opera.version();
+	engine.opera = parseFloat(engine.ver);
+}
+else if (/AppleWebKit\/(\S+)/.test(ua)) {
+	engine.ver = RegExp["$1"];
+	engine.webkit = parseFloat(engine.ver);
+}
+else if (/KHTML\/(\S+)/.test(ua) || /Konqueror\/([^;]+)/.test(ua)) {
+	engine.ver = RegExp["$1"];
+	engine.khtml = parseFloat(engine.ver);
+}
+
+在排除WebKit和KHTML之后，就可以准确地检测GecKo了。但是，在用户代理字符串中，GecKo的版本号不会出现在字符串"GecKo"的后面，而是会出现
+在字符串"rv:"的后面，这样就必须使用一个更复杂一些的正则表达式，代码如下：
+var ua = navigator.userAgent;
+if (window.opera) {
+	engine.ver = window.opera.version();
+	engine.opera = parseFloat(engine.ver);
+}
+else if (/AppleWebKit\/(\S+)/.test(ua)) {
+	engine.ver = RegExp["$1"];
+	engine.webkit = parseFloat(engine.ver);
+}
+else if (/KHTML\/(\S+)/.test(ua) || /Konqueror\/([^;]+)/.test(ua)) {
+	engine.ver = RegExp["$1"];
+	engine.khtml = parseFloat(engine.ver);
+}
+else if (/rv:([^\]+)\ Gecko\/\d{8}/.test(ua)) {
+	engine.ver = RegExp["$1"];
+	engine.gecko = parseFloat(engine.ver);
+}
+
+最后就是检测IE了，IE的版本号位于字符串"MSIE"的后面、一个分号的前面，因此相应的正则表达式非常简单，如下：
+var ua = navigator.userAgent;
+if (window.opera) {
+	engine.ver = window.opera.version();
+	engine.opera = parseFloat(engine.ver);
+}
+else if (/AppleWebKit\/(\S+)/.test(ua)) {
+	engine.ver = RegExp["$1"];
+	engine.webkit = parseFloat(engine.ver);
+}
+else if (/KHTML\/(\S+)/.test(ua) || /Konqueror\/([^;]+)/.test(ua)) {
+	engine.ver = RegExp["$1"];
+	engine.khtml = parseFloat(engine.ver);
+}
+else if (/rv:([^\]+)\ Gecko\/\d{8}/.test(ua)) {
+	engine.ver = RegExp["$1"];
+	engine.gecko = parseFloat(engine.ver);
+}
+else if (/MSIE ([^;]+)/.test(ua)) {
+	engine.ver = RegExp["$1"];
+	engine.ie = parseFloat(engine.ver);
+}
+
+2.识别浏览器
+大多数情况下，识别了浏览器的呈现引擎就足以为我们采取正常的操作提供依据了。但是，只有呈现引擎还不能说明存在所需的JavaScript功能。
+因此，需要为client对象再添加一些属性，代码略，见原书P232
+
+3.识别平台
+
+4.识别Window是操作系统
+
+5.识别移动设备
+
+6.识别游戏系统
+以上检测完整代码见原书P242
