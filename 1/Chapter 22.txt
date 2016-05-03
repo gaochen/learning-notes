@@ -143,4 +143,60 @@ alert(person.name);		// Nicholas
 检测冻结对象将分别返回false和true。
 对JavaScript库的作者而言，冻结对象是很有用的。冻结主要的库对象能够防止库中的核心对象被意外的修改。
 
-22.3 高级定时器
+22.3 高级定时器  
+人们对JavaScript的定时器存在普遍的误解，认为它们是线程，其实JavaScript是运行于单线程的环境中的，而定时器仅仅只是计划代码在未来的某个
+时间执行。可以把JavaScript想象成在时间线上运行的。当页面载入时，首先执行的是任何包含在<script>元素中的代码。在这之后，JavaScript进程
+将等待更多代码执行。当进程空闲的时候，下一个代码会被触发并立刻执行。
+除了主JavaScript执行进程外，还有一个需要在进程下一次空闲时执行的代码队列。随着页面在其生命周期中的推移，代码会按照执行顺序加入队列。
+例如，当某个按钮被按下时，它的事件处理程序代码就会被添加到队列中，并在下一个可能的时间里执行。在JavaScript中没有代码是立刻执行的，但
+一旦进程空闲则尽快执行。
+定时器对队列的工作方式是，当特定时间过去后将代码插入。注意，给队列添加代码并不意味着对它立刻执行，而只能表示它会尽快执行。
+关于定时器要记住的最重要的事情是，指定的时间间隔表示何时将定时器的代码添加到队列，而不是何时实际执行代码。
+
+22.3.1 重复的定时器
+使用setInterval()创建的定时器确保了定时器代码规则地插入队列中。这个方式的问题在于，定时器可能在代码再次被添加到队列之前还没有完成执行，
+结果导致定时器代码连续运行好几次，而之间没有任何停顿。幸好，JavaScript引擎会主动避免这个问题。当使用setInterval()时，仅当没有该定时
+器的任何其他代码实例时，才将定时器代码添加到队列中。这确保了定时器代码加入到队列中的最小时间间隔为指定间隔。 
+这种重复定时器的规则有两个问题：(1)某些间隔会被跳过；(2)多个定时器的代码执行之间的间隔可能会比预期的小。假设，某个onclick事件处理
+程序使用setInterval()设置了一个200ms间隔的重复定时器，如果事件处理程序要花300ms多一点的时间，比200ms间隔还长，就会同时出现跳过间隔
+且连续运行定时器代码的情况。
+为了避免setInterval()的重复定时器的这2个缺点，可以使用如下模式使用链式setTimeout()调用。
+setTimeout(function() {
+		setTimeout(arguments.callee, interval);
+}, interval);
+这样做的好处是，在前一个定时器代码执行完之前，不会向队列插入新的定时器代码，确保不会有任何缺失的间隔。而且，它可以保证在下一次定时器
+代码执行之前，至少要等待指定的间隔，避免了连续的运行。
+
+22.3.2 Yielding Processes
+数组分块技术，解决脚本长时间运行的问题，详见书P612
+
+22.3.2 函数节流
+函数节流背后的基本思想是指，某些代码不可以在没有间断的情况连续重复执行。特别是对DOM的操作和onresize事件处理程序。
+该模式的基本形式：
+var processor = {
+	timeoutId: null,
+	//实际进行处理的方法
+	performProcessing: function() {
+		//实际执行的代码
+	},
+	
+	//初始处理调用的方法
+	process: function() {
+		clearTimeout(this.timeoutId);
+		
+		var that = this;
+		this.timeoutId = setTimeout(function() {
+			that.performProcessing();
+		}, 100);
+	}
+};
+//尝试开始执行
+processor.process();
+
+这个模式可以用以下函数来简化：
+function throttle(method, context) {
+	clearTimeout(method.tId);
+	method.tId = setTimeout(function() {
+		method.call(context);
+	});
+}
