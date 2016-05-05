@@ -270,3 +270,7 @@ person.addHandler("message"， handleMessage);
 
 //在该对象上调用1个方法，它触发消息事件
 person.say("Hi there.");
+
+22.5 拖拽
+P622
+
