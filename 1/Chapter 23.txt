@@ -75,7 +75,25 @@ cookie由浏览器保存的以下几块信息构成。
 ·安全标志：指定后，cookie只有在使用SSL连接的时候才发送到服务器。、
 
 3. JavaScript中的cookie
-
+由于JavaScript中读写cookie不是非常直观，常常需要写一些函数来简化cookie的功能。基本的cookie操作有三种：读取、写入和删除。它们在
+CookieUtil对象中如下表示：
+var CookieUtil = {
+	get: function(name) {
+		var cookieName = encodeURIComponent(name) + "=",
+			cookieStart = document.cookie.indexOf(cookieName),
+			coolieValue = null;
+			
+		if (cookieStart > -1) {
+			var cookieEnd = document.cookie.indexOf(";", cookieStart);
+			if (cookieEnd == -1) {
+				cookieEnd = document.cookie.length;
+			}
+			cookieValue = decodeURIComponent(document.cookie.substring(cookieStart + cookieName.length, cookieEnd));
+		}
+			
+		return cookieValue;
+	}
+}
 
 
 
