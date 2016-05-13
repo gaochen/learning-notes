@@ -92,9 +92,42 @@ var CookieUtil = {
 		}
 			
 		return cookieValue;
+	}，
+	
+	set: function(name, value, expires, path, domain, secure) {
+		var cookieText = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+		
+		if (expires instanceof Date) {
+			cookieText += "; expires=" + expires.toGMTString();
+		}
+		
+		if (path) {
+			cookieText += "; path=" + path;
+		}
+		
+		if (domain) {
+			cookieText += "; domain=" + domain;
+		}
+		
+		if (secure) {
+			cookieText += "; secure";
+		}
+		
+		document.cookie = cookieText;
+	},
+	
+	unset: function(name, path, domain, secure) {
+		this.set(name, "", new Date(0), path, domain, secure);
 	}
 }
 
+4. 子cookie
+为了绕开浏览器的单域名下的cookie数的限制，一些开发人员使用了一种称为子cookie(subcookie)的概念。子cookie是存放在单个cookie中的更小段
+的数据。也就是使用cookie值来存储多个名称值对儿。子cookie最常见的格式如下所示：
+name=name1=value1&name2=value2&name3=value3&name4=value4&name5=value5
+为了更好地操作子cookie，必须建立一系列新方法。详情见 P633
+设置子cookie，也有两种方法：set()和setAll()。详情见 P634
+删除子cookie，详情见 P636
 
 
 
