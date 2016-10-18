@@ -11,6 +11,8 @@
 	<li>JavaScript高级程序设计(第三版)</li>
 	<li>HTTP权威指南</li>
 	<li>JavaScript设计模式与开发实践--曾探</li>
+    <li>计算机组成原理</li>
+    <li>计算机网络</li>
 </ol>
 
 
